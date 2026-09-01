@@ -3,15 +3,22 @@
 Usage:
     kb-rag stats <docs-dir> [--kwc-dir DIR] [--max-tokens N] [--json]
     kb-rag dump  <docs-dir> (--section NAME | --doc NAME) [--json]
+    kb-rag build <docs-dir> [--kwc-dir DIR] [--state PATH] [--embed-url URL]
+    kb-rag query <state-path> "text query" [-k N] [--json]
 """
 from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
+import time
 from pathlib import Path
 
 from kb_rag.chunkers import chunk_document
+
+DEFAULT_STATE = Path(os.environ.get("KB_STATE", str(Path.home() / "klipper-rag-state" / "kb.sqlite")))
+DEFAULT_EMBED_URL = os.environ.get("KB_EMBED_URL", "http://192.168.1.135:8100")
 
 
 def _iter_docs(docs_dir: Path, source: str):
@@ -110,6 +117,91 @@ def cmd_dump(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_build(args: argparse.Namespace) -> int:
+    docs_dir = Path(args.docs_dir).expanduser()
+    if not docs_dir.is_dir():
+        print(f"error: no such directory: {docs_dir}", file=sys.stderr)
+        return 2
+    chunks = _collect(docs_dir, Path(args.kwc_dir).expanduser() if args.kwc_dir else None,
+                      args.max_tokens)
+    if not chunks:
+        print("error: no markdown docs found", file=sys.stderr)
+        return 2
+    from kb_rag.embed import EmbedClient
+    from kb_rag.index import KbIndex
+
+    client = EmbedClient(base_url=args.embed_url)
+    # probe once, early — fail before burning CPU on chunking output
+    try:
+        probe = client.embed_query("probe")
+    except Exception as e:  # noqa: BLE001 - surface any transport error
+        print(f"error: embedding server unreachable at {args.embed_url}: {e}",
+              file=sys.stderr)
+        return 3
+    dim = len(probe)
+
+    t0 = time.monotonic()
+    vectors = _stack_rows(client.embed_documents([c.text for c in chunks]), dim)
+    idx = KbIndex(Path(args.state), dim=dim)
+    idx.save(chunks, vectors, meta={
+        "docs_dir": str(docs_dir),
+        "kwc_dir": str(args.kwc_dir) if args.kwc_dir else None,
+        "embed_url": args.embed_url,
+        "embed_model": client.model,
+        "built_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
+        "build_seconds": round(time.monotonic() - t0, 1),
+    })
+    print(f"built {idx.count()} chunks dim={dim} "
+          f"in {idx.meta['build_seconds']}s -> {args.state}")
+    return 0
+
+
+def _stack_rows(vecs, dim: int):
+    import numpy as np
+    arr = np.stack([np.asarray(v, dtype=np.float32) for v in vecs])
+    bad = np.abs(np.linalg.norm(arr, axis=1) - 1.0) > 1e-3
+    if bad.any():
+        raise RuntimeError(f"{int(bad.sum())} vectors not unit-norm")
+    assert arr.shape[1] == dim
+    return arr
+
+
+def cmd_query(args: argparse.Namespace) -> int:
+    from kb_rag.embed import EmbedClient
+    from kb_rag.index import KbIndex
+
+    state = Path(args.state).expanduser()
+    if not state.is_file():
+        print(f"error: no index at {state} (run kb-rag build first)", file=sys.stderr)
+        return 2
+    idx = KbIndex.load(state)
+    embed_url = args.embed_url or idx.meta.get("embed_url") or DEFAULT_EMBED_URL
+    client = EmbedClient(base_url=embed_url)
+
+    t0 = time.monotonic()
+    qv = client.embed_query(args.query)
+    embed_ms = int((time.monotonic() - t0) * 1000)
+    sources = set(args.source.split(",")) if args.source else None
+    t1 = time.monotonic()
+    results = idx.search_vector(qv, k=args.k, sources=sources)
+    search_ms = int((time.monotonic() - t1) * 1000)
+
+    if args.json:
+        print(json.dumps([{
+            "id": r.chunk.id, "section": r.chunk.section,
+            "breadcrumb": r.chunk.breadcrumb, "score": round(r.score, 4),
+            "text": r.chunk.text,
+        } for r in results], indent=2))
+        return 0
+    for r in results:
+        print(f"--- {r.score:.4f}  {r.chunk.id}")
+        snippet = r.chunk.text[:240].replace(chr(10), " ")
+        print(f"    {snippet}...")
+    print(f"(embed {embed_ms}ms + search {search_ms}ms, {idx.count()} chunks)",
+          file=sys.stderr)
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(prog="kb-rag", description=__doc__)
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -129,6 +221,23 @@ def main(argv: list[str] | None = None) -> int:
     pd.add_argument("--doc", help="exact doc stem, e.g. Bed_Mesh")
     pd.add_argument("--json", action="store_true")
     pd.set_defaults(fn=cmd_dump)
+
+    pb = sub.add_parser("build", help="chunk + embed a docs dir into the index")
+    pb.add_argument("docs_dir")
+    pb.add_argument("--kwc-dir")
+    pb.add_argument("--max-tokens", type=int, default=500)
+    pb.add_argument("--state", default=str(DEFAULT_STATE))
+    pb.add_argument("--embed-url", default=DEFAULT_EMBED_URL)
+    pb.set_defaults(fn=cmd_build)
+
+    pq = sub.add_parser("query", help="dense semantic query against the index")
+    pq.add_argument("state")
+    pq.add_argument("query")
+    pq.add_argument("-k", type=int, default=3)
+    pq.add_argument("--source", help="comma list: klipper,kwc")
+    pq.add_argument("--embed-url", default=None)
+    pq.add_argument("--json", action="store_true")
+    pq.set_defaults(fn=cmd_query)
 
     args = p.parse_args(argv)
     return args.fn(args)
