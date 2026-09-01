@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "klipper-rag"
+version = "0.1.0"
+description = "Hybrid (FTS5 + dense) retrieval over the Klipper firmware docs"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "GPL-3.0-or-later" }
+dependencies = []
+
+[project.optional-dependencies]
+# Phase 1+: fastapi/uvicorn/httpx/numpy enter ONLY with the retrieval server.
+dev = ["pytest>=8"]
+
+[project.scripts]
+kb-rag = "kb_rag.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["kb_rag*"]
