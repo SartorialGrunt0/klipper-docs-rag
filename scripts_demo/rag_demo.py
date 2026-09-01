@@ -77,18 +77,38 @@ def ask(messages, max_tokens=1200):
 
 
 def main():
+    global CHAT_MODEL
+    import argparse
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("-q", "--question", nargs="+",
+                    help="ask this question instead of the built-in set")
+    ap.add_argument("--model", default=CHAT_MODEL,
+                    help=f"chat model on 135:8080 (default {CHAT_MODEL})")
+    ap.add_argument("-k", type=int, default=3)
+    ap.add_argument("--retrieval-only", action="store_true",
+                    help="show retrieved chunks only, skip the chat model")
+    args = ap.parse_args()
+
+    CHAT_MODEL = args.model
+
     idx = KbIndex.load(STATE)
     client = EmbedClient(base_url=idx.meta["embed_url"])
 
-    for item in QUESTIONS:
+    questions = (
+        [{"id": "custom", "q": " ".join(args.question),
+          "expect": []}]
+        if args.question else QUESTIONS)
+
+    for item in questions:
         q = item["q"]
         print("=" * 72)
         print(f"Q [{item['id']}]: {q}")
-        print(f"   gold-ish terms: {item['expect']}")
+        if item["expect"]:
+            print(f"   gold-ish terms: {item['expect']}")
 
         t0 = time.time()
         qv = client.embed_query(q)
-        hits = hybrid_search(idx, qvec=qv, text=q, k=3)
+        hits = hybrid_search(idx, qvec=qv, text=q, k=args.k)
         retrieve_ms = (time.time() - t0) * 1000
 
         print(f"\n--- retrieved in {retrieve_ms:.0f} ms "
@@ -97,6 +117,9 @@ def main():
             crumb = f"{h.chunk.doc}::{h.chunk.section}"
             print(f"  [{i}] {crumb}  (rrf={h.score:.4f})")
             print("      " + h.chunk.text.replace("\n", " ")[:140])
+        if args.retrieval_only:
+            print()
+            continue
 
         context = "\n\n".join(
             f"--- {h.chunk.doc} :: {h.chunk.section} ---\n{h.chunk.text}"
