@@ -20,7 +20,7 @@ import numpy as np
 
 from kb_rag.chunk import Chunk
 
-_SCHEMA = """
+_LLM_SCHEMA_HINT = """
 CREATE TABLE IF NOT EXISTS chunks (
     id TEXT PRIMARY KEY,
     doc TEXT NOT NULL,
@@ -37,6 +37,18 @@ CREATE TABLE IF NOT EXISTS vectors (
 CREATE TABLE IF NOT EXISTS meta (
     key TEXT PRIMARY KEY,
     value TEXT NOT NULL
+);
+-- Sparse leg: FTS5/BM25 over chunk text + section.
+-- tokenize keeps '.', '_', '+' as token chars (identifiers like heater_fan,
+-- tmc2209, CANBus stay whole); NO porter stemming -- stemmers damage exact
+-- identifier hits, and the dense leg already covers prose paraphrase.
+CREATE VIRTUAL TABLE IF NOT EXISTS chunks_fts USING fts5(
+    text,
+    section,
+    chunk_id UNINDEXED,
+    doc UNINDEXED,
+    source UNINDEXED,
+    tokenize = "unicode61 tokenchars '._+'"
 );
 """
 
@@ -74,10 +86,11 @@ class KbIndex:
         self.path.parent.mkdir(parents=True, exist_ok=True)
         con = sqlite3.connect(self.path)
         try:
-            con.executescript(_SCHEMA)
+            con.executescript(_LLM_SCHEMA_HINT)
             # full replace: chunking/embedding is deterministic from docs,
             # incremental updates are not worth the complexity at this size
             con.execute("DELETE FROM vectors")
+            con.execute("DELETE FROM chunks_fts")
             con.execute("DELETE FROM chunks")
             con.execute("DELETE FROM meta")
             con.executemany(
@@ -88,6 +101,12 @@ class KbIndex:
             con.executemany(
                 "INSERT INTO vectors VALUES (?,?)",
                 [(c.id, vectors[i].tobytes()) for i, c in enumerate(chunks)],
+            )
+            con.executemany(
+                "INSERT INTO chunks_fts (text, section, chunk_id, doc, source)"
+                " VALUES (?,?,?,?,?)",
+                [(c.text, c.section or "", c.id, c.doc, c.source)
+                 for c in chunks],
             )
             con.executemany(
                 "INSERT INTO meta VALUES (?,?)",
@@ -160,6 +179,48 @@ class KbIndex:
             out.append(SearchResult(chunk=chunk, score=float(scores[int(i)])))
             if len(out) >= k:
                 break
+        return out
+
+    def search_text(
+        self,
+        query: str,
+        k: int = 3,
+        sources: set[str] | None = None,
+    ) -> list[SearchResult]:
+        """BM25 (FTS5) keyword leg. Exact identifiers stay whole: the
+        tokenizer keeps '.', '_' and '+' as token chars and does NO
+        stemming, so 'heater_fan' matches only 'heater_fan'.
+
+        Terms are joined with OR (an all-terms AND dies on any stray word).
+        Score is -bm25() so higher == better, consistent with search_vector.
+        """
+        from kb_rag.retrieve import fts_query
+
+        q = fts_query(query)
+        if not q:
+            return []
+        con = sqlite3.connect(self.path)
+        try:
+            sql = (
+                "SELECT chunk_id, bm25(chunks_fts) AS s FROM chunks_fts"
+                " WHERE chunks_fts MATCH ?"
+            )
+            args: list = [q]
+            if sources:
+                sql += " AND source IN (%s)" % ",".join("?" * len(sources))
+                args += sorted(sources)
+            sql += " ORDER BY s LIMIT ?"  # bm25() is negative-good
+            args.append(k)
+            rows = con.execute(sql, args).fetchall()
+        except sqlite3.OperationalError:
+            return []
+        finally:
+            con.close()
+        out: list[SearchResult] = []
+        for chunk_id, s in rows:
+            chunk = self.get(chunk_id)
+            if chunk is not None:
+                out.append(SearchResult(chunk=chunk, score=-float(s)))
         return out
 
     def get(self, chunk_id: str) -> Chunk | None:
