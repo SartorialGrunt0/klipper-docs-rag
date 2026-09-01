@@ -38,10 +38,16 @@ CREATE TABLE IF NOT EXISTS meta (
     key TEXT PRIMARY KEY,
     value TEXT NOT NULL
 );
--- Sparse leg: FTS5/BM25 over chunk text + section.
--- tokenize keeps '.', '_', '+' as token chars (identifiers like heater_fan,
--- tmc2209, CANBus stay whole); NO porter stemming -- stemmers damage exact
--- identifier hits, and the dense leg already covers prose paraphrase.
+"""
+
+
+def _fts_schema() -> str:
+    # Sparse leg: FTS5/BM25 over chunk text + section.
+    # tokenize keeps '.', '_', '+' as token chars (identifiers like
+    # heater_fan, tmc2209, CANBus stay whole); NO porter stemming --
+    # stemmers damage exact identifier hits, and the dense leg already
+    # covers prose paraphrase.
+    return """
 CREATE VIRTUAL TABLE IF NOT EXISTS chunks_fts USING fts5(
     text,
     section,
@@ -51,6 +57,26 @@ CREATE VIRTUAL TABLE IF NOT EXISTS chunks_fts USING fts5(
     tokenize = "unicode61 tokenchars '._+'"
 );
 """
+
+
+def _ensure_fts(con: sqlite3.Connection) -> None:
+    """Create chunks_fts if missing and backfill it from chunks.
+
+    Makes a phase-1 (dense-only) index file work with the sparse leg
+    without a rebuild: FTS content is derived, always safe to regenerate.
+    """
+    has = con.execute(
+        "SELECT 1 FROM sqlite_master WHERE type='table'"
+        " AND name='chunks_fts'"
+    ).fetchone()
+    if has:
+        return
+    con.execute(_fts_schema())
+    con.execute(
+        "INSERT INTO chunks_fts (text, section, chunk_id, doc, source)"
+        " SELECT text, COALESCE(section,''), id, doc, source FROM chunks"
+    )
+    con.commit()
 
 
 @dataclass
@@ -87,6 +113,7 @@ class KbIndex:
         con = sqlite3.connect(self.path)
         try:
             con.executescript(_LLM_SCHEMA_HINT)
+            con.executescript(_fts_schema())
             # full replace: chunking/embedding is deterministic from docs,
             # incremental updates are not worth the complexity at this size
             con.execute("DELETE FROM vectors")
@@ -129,6 +156,7 @@ class KbIndex:
         obj = cls(path)
         con = sqlite3.connect(path)
         try:
+            _ensure_fts(con)
             rows = con.execute(
                 "SELECT c.id, c.doc, c.section, c.source, c.breadcrumb,"
                 " c.tokens, c.text, v.vec"

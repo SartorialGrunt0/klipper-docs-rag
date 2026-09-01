@@ -1,0 +1,334 @@
+{
+  "overall": {
+    "n": 27,
+    "k": 3,
+    "recall_at_k": 0.9259259259259259,
+    "precision_at_k": 0.4691358024691358,
+    "mrr": 0.7839506172839507
+  },
+  "by_category": {
+    "parameter": {
+      "n": 10,
+      "recall_at_k": 0.9,
+      "mrr": 0.7666666666666666
+    },
+    "conceptual": {
+      "n": 8,
+      "recall_at_k": 0.875,
+      "mrr": 0.75
+    },
+    "troubleshooting": {
+      "n": 5,
+      "recall_at_k": 1.0,
+      "mrr": 0.9
+    },
+    "macro-jinja": {
+      "n": 4,
+      "recall_at_k": 1.0,
+      "mrr": 0.75
+    }
+  },
+  "per_query": [
+    {
+      "id": "param-heater-fan",
+      "category": "parameter",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "param-extruder-rotation",
+      "category": "parameter",
+      "hit_ranks": [
+        1,
+        2,
+        3
+      ],
+      "recall": 1.0,
+      "precision": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "id": "param-mcu-serial",
+      "category": "parameter",
+      "hit_ranks": [
+        1,
+        3
+      ],
+      "recall": 1.0,
+      "precision": 0.6666666666666666,
+      "mrr": 1.0
+    },
+    {
+      "id": "param-tmc2209-uart",
+      "category": "parameter",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "param-fan-cycle",
+      "category": "parameter",
+      "hit_ranks": [
+        1,
+        2
+      ],
+      "recall": 1.0,
+      "precision": 0.6666666666666666,
+      "mrr": 1.0
+    },
+    {
+      "id": "param-gcode-macro-variable",
+      "category": "parameter",
+      "hit_ranks": [
+        3
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 0.3333333333333333
+    },
+    {
+      "id": "param-bed-mesh-fade",
+      "category": "parameter",
+      "hit_ranks": [
+        1,
+        2,
+        3
+      ],
+      "recall": 1.0,
+      "precision": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "id": "param-load-cell",
+      "category": "parameter",
+      "hit_ranks": [
+        3
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 0.3333333333333333
+    },
+    {
+      "id": "concept-input-shaper",
+      "category": "conceptual",
+      "hit_ranks": [
+        2
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 0.5
+    },
+    {
+      "id": "concept-kinematics",
+      "category": "conceptual",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "concept-multi-mcu",
+      "category": "conceptual",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "concept-canbus-uuid",
+      "category": "conceptual",
+      "hit_ranks": [
+        1,
+        2,
+        3
+      ],
+      "recall": 1.0,
+      "precision": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "id": "concept-resonance-measure",
+      "category": "conceptual",
+      "hit_ranks": [
+        1,
+        2
+      ],
+      "recall": 1.0,
+      "precision": 0.6666666666666666,
+      "mrr": 1.0
+    },
+    {
+      "id": "concept-z-tilt",
+      "category": "conceptual",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "trouble-lost-communication",
+      "category": "troubleshooting",
+      "hit_ranks": [
+        2
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 0.5
+    },
+    {
+      "id": "trouble-mcu-shutdown-comms",
+      "category": "troubleshooting",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "trouble-z-screech-homing",
+      "category": "troubleshooting",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "trouble-tmc-off-midprint",
+      "category": "troubleshooting",
+      "hit_ranks": [
+        1,
+        2
+      ],
+      "recall": 1.0,
+      "precision": 0.6666666666666666,
+      "mrr": 1.0
+    },
+    {
+      "id": "trouble-rpi-rebooting",
+      "category": "troubleshooting",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "macro-jinja-conditional",
+      "category": "macro-jinja",
+      "hit_ranks": [
+        2,
+        3
+      ],
+      "recall": 1.0,
+      "precision": 0.6666666666666666,
+      "mrr": 0.5
+    },
+    {
+      "id": "macro-save-state",
+      "category": "macro-jinja",
+      "hit_ranks": [
+        1,
+        3
+      ],
+      "recall": 1.0,
+      "precision": 0.6666666666666666,
+      "mrr": 1.0
+    },
+    {
+      "id": "macro-params",
+      "category": "macro-jinja",
+      "hit_ranks": [
+        2
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 0.5
+    },
+    {
+      "id": "macro-templates-intro",
+      "category": "macro-jinja",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "gcode-arcs",
+      "category": "parameter",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "status-query-temperature",
+      "category": "conceptual",
+      "hit_ranks": [
+        1,
+        2
+      ],
+      "recall": 1.0,
+      "precision": 0.6666666666666666,
+      "mrr": 1.0
+    },
+    {
+      "id": "sdcard-loop",
+      "category": "parameter",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "exclude-object",
+      "category": "conceptual",
+      "hit_ranks": [
+        2
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 0.5
+    }
+  ],
+  "misses": [
+    {
+      "id": "concept-multi-mcu",
+      "category": "conceptual",
+      "query": "Can I use more than one micro-controller board in one printer?",
+      "top": [
+        "Installation::Building and flashing the micro-controller",
+        "Features::Features",
+        "RPi_microcontroller::Why use RPi as a secondary MCU?"
+      ]
+    },
+    {
+      "id": "sdcard-loop",
+      "category": "parameter",
+      "query": "How do I repeat a section of a gcode file while printing?",
+      "top": [
+        "Command_Templates::Delayed Gcodes",
+        "Slicers::Klipper gcode_macro",
+        "G-Codes::[palette2]"
+      ]
+    }
+  ]
+}

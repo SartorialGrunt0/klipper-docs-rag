@@ -23,6 +23,9 @@ _RRF_K = 60
 _TERM_RE = re.compile(r"[A-Za-z0-9._+]+")
 _HAS_ALNUM = re.compile(r"[A-Za-z0-9]")
 _IDENTISH = re.compile(r"[._+]|[\d]")
+# Identifier-like query terms: contains '.' '_' '+' or a digit (heater_fan,
+# tmc2209, cycle_time, CANBus... case handled by lowercasing first).
+_IDENT_RE = re.compile(r"[a-z0-9]*(?:[._+]|\d)[a-z0-9._+]*")
 
 
 def fts_query(text: str) -> str:
@@ -53,16 +56,23 @@ def fts_query(text: str) -> str:
 def rrf_fuse(
     rankings: list[list[tuple[str, int]]],
     k_rrf: int = _RRF_K,
+    weights: list[float] | None = None,
 ) -> list[tuple[str, float]]:
     """Reciprocal Rank Fusion over (id, rank) lists from each leg.
 
-    RRF(d) = sum over legs of 1 / (k + rank). Returns (id, score) pairs
-    sorted by fused score descending; ties broken by first-seen order.
+    RRF(d) = sum over legs of weight / (k + rank). Weighted variant:
+    at corpus scale the dense leg is the strong ranking and the sparse
+    leg is a precision booster for exact identifiers, so sparse gets a
+    weight < 1 (it must never veto a dense hit with common-word noise).
+    Returns (id, score) pairs sorted by fused score descending; ties
+    broken by first-seen order.
     """
+    if weights is None:
+        weights = [1.0] * len(rankings)
     scores: dict[str, float] = defaultdict(float)
-    for leg in rankings:
+    for leg, w in zip(rankings, weights):
         for doc_id, rank in leg:
-            scores[doc_id] += 1.0 / (k_rrf + rank)
+            scores[doc_id] += w / (k_rrf + rank)
     return sorted(scores.items(), key=lambda kv: -kv[1])
 
 
@@ -105,35 +115,50 @@ def hybrid_search(
     sources: set[str] | None = None,
     k_rrf: int = _RRF_K,
     candidate_k: int | None = None,
+    dense_weight: float = 1.0,
+    sparse_weight: float = 0.5,
 ) -> list[SearchResult]:
-    """Dense + sparse retrieval fused by RRF; returns top-k SearchResults.
+    """Dense + sparse retrieval fused by weighted RRF; top-k SearchResults.
 
-    Either leg alone is fine (missing qvec or text skips that leg). Score in
-    the returned SearchResult is the fused RRF score, not a cosine.
+    The sparse leg is *identifier-gated*: only identifier-like query terms
+    (containing '.', '_', '+' or a digit — ``heater_fan``, ``tmc2209``,
+    ``cycle_time``) feed FTS5, at half weight. Eval (phase 2, n=27) showed
+    full prose OR-queries flood fusion with common-word hits that evict
+    dense winners (0.926 -> 0.852 recall); at w=0.5 identifier-gated the
+    leg recovers parity (0.926) and boosts exact-identifier hits without
+    vetoing prose results.
+
+    Either leg alone is fine (missing qvec/text, or no identifiers in
+    text, skips that leg). Score in the returned SearchResult is the
+    fused RRF score, not a cosine.
     """
     candidate_k = candidate_k or max(3 * k, 10)
     legs: list[list[tuple[str, int]]] = []
+    weights: list[float] = []
     by_id: dict[str, SearchResult] = {}
 
     if qvec is not None:
         dense = index.search_vector(qvec, k=candidate_k, sources=sources)
         legs.append([(r.chunk.id, i + 1) for i, r in enumerate(dense)])
+        weights.append(dense_weight)
         for r in dense:
             by_id.setdefault(r.chunk.id, r)
 
     if text:
-        q = fts_query(text)
+        ident_terms = " ".join(_IDENT_RE.findall(text.lower()))
+        q = fts_query(ident_terms) if ident_terms else ""
         if q:
             sparse = _fts_search(index, q, candidate_k, sources)
             if sparse:
                 legs.append([(r.chunk.id, i + 1) for i, r in enumerate(sparse)])
+                weights.append(sparse_weight)
                 for r in sparse:
                     by_id.setdefault(r.chunk.id, r)
 
     if not legs:
         return []
 
-    fused = rrf_fuse(legs, k_rrf=k_rrf)
+    fused = rrf_fuse(legs, k_rrf=k_rrf, weights=weights)
     out: list[SearchResult] = []
     for chunk_id, score in fused[:k]:
         base = by_id.get(chunk_id)

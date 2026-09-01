@@ -52,13 +52,20 @@ def chunk_matches(chunk, gold_entry: list) -> bool:
     return prefix.lower() in (chunk.section or "").lower()
 
 
-def evaluate(gold: list[dict], index: KbIndex, client: EmbedClient, k: int):
+def evaluate(gold: list[dict], index: KbIndex, client: EmbedClient, k: int,
+             mode: str = "dense"):
     per_query = []
     per_cat = defaultdict(lambda: {"n": 0, "recall": 0.0, "mrr": 0.0})
     misses = []
     for item in gold:
         qv = client.embed_query(item["query"])
-        results = index.search_vector(qv, k=k)
+        if mode == "hybrid":
+            from kb_rag.retrieve import hybrid_search
+            results = hybrid_search(index, qvec=qv, text=item["query"], k=k)
+        elif mode == "sparse":
+            results = index.search_text(item["query"], k=k)
+        else:
+            results = index.search_vector(qv, k=k)
         # dedupe: any gold entry matching counts
         hit_ranks = []
         for rank, r in enumerate(results, 1):
@@ -102,6 +109,8 @@ def main() -> int:
     ap.add_argument("--state", required=True)
     ap.add_argument("--gold", default=str(GOLD_PATH))
     ap.add_argument("-k", type=int, default=3)
+    ap.add_argument("--mode", choices=("dense", "sparse", "hybrid"),
+                    default="dense")
     ap.add_argument("--embed-url", default=None)
     ap.add_argument("--json", default=None, help="write full report to file")
     args = ap.parse_args()
@@ -114,10 +123,11 @@ def main() -> int:
     client = EmbedClient(base_url=url)
 
     gold = load_gold(Path(args.gold))
-    report = evaluate(gold, index, client, args.k)
+    report = evaluate(gold, index, client, args.k, mode=args.mode)
 
     o = report["overall"]
-    print(f"n={o['n']} k={o['k']}  Recall@{o['k']}={o['recall_at_k']:.3f} "
+    print(f"mode={args.mode} n={o['n']} k={o['k']}  "
+          f"Recall@{o['k']}={o['recall_at_k']:.3f} "
           f"P@{o['k']}={o['precision_at_k']:.3f} MRR={o['mrr']:.3f}")
     for cat, s in sorted(report["by_category"].items()):
         print(f"  {cat:16} n={s['n']:2}  recall={s['recall_at_k']:.3f}  mrr={s['mrr']:.3f}")
