@@ -48,8 +48,11 @@ SYSTEM_PREAMBLE = (
 CONTEXT_TEMPLATE = (
     "{user_system}\n\n"
     "Use the CONTEXT excerpts from the Klipper docs when relevant and cite "
-    "the doc/section; if they don't cover the question, answer from your "
-    "own knowledge and say the docs context didn't cover it.\n\n"
+    "the doc/section. If the context doesn't cover part of the question and "
+    "document-lookup tools (search_klipper_docs, get_config_reference_section, "
+    "read_klipper_doc) are available, USE THEM for that part instead of "
+    "answering from memory. Only fall back to your own knowledge when no "
+    "tool can help, and say the docs context didn't cover it.\n\n"
     "=== CONTEXT ===\n{context}\n=== END CONTEXT ==="
 )
 
