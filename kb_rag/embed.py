@@ -10,6 +10,7 @@ Vectors are L2-normalized defensively (regardless of server-side
 """
 from __future__ import annotations
 
+import os
 from typing import Any, Callable
 
 import httpx
@@ -18,13 +19,14 @@ import numpy as np
 NOMIC_DOC_PREFIX = "search_document: "
 NOMIC_QUERY_PREFIX = "search_query: "
 
-DEFAULT_BASE_URL = "http://192.168.1.135:8100"
+DEFAULT_BASE_URL = os.environ.get("KB_EMBED_URL", "http://127.0.0.1:8080")
+DEFAULT_MODEL = os.environ.get("KB_EMBED_MODEL", "nomic-embed-text-v1.5")
 DEFAULT_BATCH_SIZE = 8
 # llama-server rejects a /v1/embeddings request whose combined input tokens
-# exceed the server's --ubatch-size (verified on CachyPC: a 587-real-token
-# request 500'd against the default ubatch 512; unit now runs -b 2048 -ub
-# 2048). approx_tokens undercounts BPE ~20% on code/JSON-heavy text, so
-# 1500 est keeps actual requests under ~1800.
+# exceed the server's --ubatch-size (verified: a 587-real-token
+# request 500'd against the default ubatch 512; run the embed server with
+# -b 2048 -ub 2048). approx_tokens undercounts BPE ~20% on code/JSON-heavy
+# text, so 1500 est keeps actual requests under ~1800.
 DEFAULT_BATCH_TOKENS = 1500
 # llama-server / nomic context is 2048 tokens; 6000 chars is a conservative
 # ~4x slack for the technical-doc character mix. Overlong inputs are hard-
@@ -42,14 +44,14 @@ class EmbedClient:
     def __init__(
         self,
         base_url: str = DEFAULT_BASE_URL,
-        model: str = "nomic-embed-text-v1.5",
+        model: str | None = None,
         batch_size: int = DEFAULT_BATCH_SIZE,
         batch_tokens: int = DEFAULT_BATCH_TOKENS,
         max_chars: int = DEFAULT_MAX_CHARS,
         timeout: float = 120.0,
     ) -> None:
         self.url = base_url.rstrip("/") + "/v1/embeddings"
-        self.model = model
+        self.model = model or DEFAULT_MODEL
         self.batch_size = batch_size
         self.batch_tokens = batch_tokens
         self.max_chars = max_chars

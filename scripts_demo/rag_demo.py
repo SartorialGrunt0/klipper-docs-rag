@@ -1,28 +1,28 @@
 #!/usr/bin/env python3
 """Standalone RAG demo: same model, same question — cold vs RAG-augmented.
 
-Pipeline mirrors the intended KWC wiring exactly:
-  query -> kb_rag.hybrid_search (embeds via 135:8100) -> top-k chunks
-        -> injected as CONTEXT block -> chat model on 135:8080
+Pipeline mirrors the proxy wiring exactly:
+  query -> kb_rag.hybrid_search (via your embedding provider) -> top-k chunks
+        -> injected as CONTEXT block -> your chat model
 
-KWC talks to qwen3.5-9b; we demo on gemma-4-12b (currently loaded —
-avoids a ~10s model swap mid-demo). Swap CHAT_MODEL to compare later.
+Configure via env: KB_CHAT_URL / KB_CHAT_MODEL / KB_STATE.
 """
 import json
+import os
 import sys
 import time
 from pathlib import Path
 
 import httpx
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from kb_rag.index import KbIndex          # noqa: E402
 from kb_rag.embed import EmbedClient      # noqa: E402
 from kb_rag.retrieve import hybrid_search # noqa: E402
 
-CHAT_URL = "http://192.168.1.135:8080/v1/chat/completions"
-CHAT_MODEL = "gemma-4-12b"
-STATE = Path.home() / "klipper-rag-state/kb.sqlite"
+CHAT_URL = os.environ.get("KB_CHAT_URL", "http://127.0.0.1:8080/v1") + "/chat/completions"
+CHAT_MODEL = os.environ.get("KB_CHAT_MODEL", "gemma-4-12b")
+STATE = Path(os.environ.get("KB_STATE", Path.home() / ".klipper-rag" / "kb.sqlite"))
 
 QUESTIONS = [
     {

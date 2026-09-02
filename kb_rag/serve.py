@@ -1,9 +1,9 @@
 """OpenAI-compatible RAG proxy: exposes virtual model 'klipper-expert'.
 
-Any OpenAI client (KWC, Open WebUI, curl) can select model
+Any OpenAI client (Open WebUI, LibreChat, curl, SDKs) can select model
 "klipper-expert"; this server retrieves from the klipper-docs index,
 injects a CONTEXT block, and forwards to the real chat model on the
-llama.cpp server. No tool calling needed — RAG happens for every prompt.
+upstream provider. No tool calling needed — RAG happens for every prompt.
 
 Endpoints:
   GET  /v1/models             -> virtual 'klipper-expert' + passthrough list
@@ -11,9 +11,9 @@ Endpoints:
   POST /retrieve              -> {"query":..., "k":...} raw chunks (dev)
   GET  /health                -> ok
 
-Run (on the CachyPC, next to llama-server and the embed server):
-  python -m kb_rag.serve --state ~/klipper-rag-state/kb.sqlite \
-      --chat-url http://127.0.0.1:8080/v1 --base-model gemma-4-12b --port 8090
+Run (next to your embedding server, after `kb-rag build`):
+  python -m kb_rag.serve --state ~/.klipper-rag/kb.sqlite \
+      --chat-url http://127.0.0.1:8080/v1 --base-model <chat-model> --port 8090
 
 Stdlib http.server + httpx only: the dependency list stays closed.
 """
@@ -70,7 +70,7 @@ DOMAIN_HINTS = frozenset({
     "kinematics", "stealthburner", "hotkey", "spider",
 })
 # Cross-encoder rescoring: 10 fused candidates -> k (eval-earned: hybrid
-# R@3 0.857/MRR 0.694 -> 0.898/0.770 at p50 74ms on the CachyPC).
+# R@3 0.857/MRR 0.694 -> 0.898/0.770 at p50 74ms, eval-earned).
 RERANK_CANDIDATES = 10
 # Stricter than retrieve._IDENT_RE: separators must sit *between* alphanums
 # (no trailing "vacation." false positives), digits must be inside a word.
@@ -290,8 +290,13 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--state", required=True)
     ap.add_argument("--chat-url", default="http://127.0.0.1:8080/v1")
-    ap.add_argument("--base-model", default="gemma-4-12b")
+    ap.add_argument("--base-model", required=True,
+                    help="chat model served by --chat-url that answers "
+                         "RAG-augmented requests")
     ap.add_argument("--embed-url", default=None)
+    ap.add_argument("--embed-model", default=None,
+                    help="embedding model name; defaults to the one "
+                         "recorded in the index at build time")
     ap.add_argument("--port", type=int, default=8090)
     ap.add_argument("--host", default="0.0.0.0")
     ap.add_argument("-k", type=int, default=3)
@@ -304,7 +309,10 @@ def main() -> int:
     args = ap.parse_args()
 
     index = KbIndex.load(Path(args.state))
-    embed = EmbedClient(base_url=args.embed_url or index.meta["embed_url"])
+    embed = EmbedClient(
+        base_url=args.embed_url or index.meta["embed_url"],
+        model=args.embed_model or index.meta.get("embed_model"),
+    )
     reranker = None
     if args.rerank_url:
         from kb_rag.rerank import RerankClient

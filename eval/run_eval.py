@@ -54,7 +54,7 @@ def chunk_matches(chunk, gold_entry: list) -> bool:
 
 def evaluate(gold: list[dict], index: KbIndex, client: EmbedClient, k: int,
              mode: str = "dense", sparse_weight: float = 0.5,
-             rerank_url: str = "http://192.168.1.135:8101/v1/rerank"):
+             rerank_url: str = "http://127.0.0.1:8101/v1/rerank"):
     per_query = []
     per_cat = defaultdict(lambda: {"n": 0, "recall": 0.0, "mrr": 0.0})
     misses = []
@@ -122,7 +122,7 @@ def main() -> int:
     ap.add_argument("--mode", choices=("dense", "sparse", "hybrid", "rerank"),
                     default="dense")
     ap.add_argument("--rerank-url",
-                    default="http://192.168.1.135:8101/v1/rerank")
+                    default="http://127.0.0.1:8101/v1/rerank")
     ap.add_argument("--sparse-weight", type=float, default=0.5,
                     help="RRF weight of the FTS5 leg in hybrid mode")
     ap.add_argument("--embed-url", default=None)

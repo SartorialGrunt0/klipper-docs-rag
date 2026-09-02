@@ -18,7 +18,8 @@ from pathlib import Path
 from kb_rag.chunkers import chunk_document
 
 DEFAULT_STATE = Path(os.environ.get("KB_STATE", str(Path.home() / "klipper-rag-state" / "kb.sqlite")))
-DEFAULT_EMBED_URL = os.environ.get("KB_EMBED_URL", "http://192.168.1.135:8100")
+DEFAULT_EMBED_URL = os.environ.get("KB_EMBED_URL", "http://127.0.0.1:8080")
+DEFAULT_EMBED_MODEL = os.environ.get("KB_EMBED_MODEL", "nomic-embed-text-v1.5")
 
 
 def _iter_docs(docs_dir: Path, source: str):
@@ -130,7 +131,7 @@ def cmd_build(args: argparse.Namespace) -> int:
     from kb_rag.embed import EmbedClient
     from kb_rag.index import KbIndex
 
-    client = EmbedClient(base_url=args.embed_url)
+    client = EmbedClient(base_url=args.embed_url, model=args.embed_model)
     # probe once, early — fail before burning CPU on chunking output
     try:
         probe = client.embed_query("probe")
@@ -176,7 +177,8 @@ def cmd_query(args: argparse.Namespace) -> int:
         return 2
     idx = KbIndex.load(state)
     embed_url = args.embed_url or idx.meta.get("embed_url") or DEFAULT_EMBED_URL
-    client = EmbedClient(base_url=embed_url)
+    embed_model = args.embed_model or idx.meta.get("embed_model") or DEFAULT_EMBED_MODEL
+    client = EmbedClient(base_url=embed_url, model=embed_model)
 
     t0 = time.monotonic()
     qv = client.embed_query(args.query)
@@ -228,6 +230,10 @@ def main(argv: list[str] | None = None) -> int:
     pb.add_argument("--max-tokens", type=int, default=500)
     pb.add_argument("--state", default=str(DEFAULT_STATE))
     pb.add_argument("--embed-url", default=DEFAULT_EMBED_URL)
+    pb.add_argument("--embed-model", default=DEFAULT_EMBED_MODEL,
+                    help="embedding model name served by --embed-url "
+                         "(must stay the same for query/serve; changing it "
+                         "requires a rebuild)")
     pb.set_defaults(fn=cmd_build)
 
     pq = sub.add_parser("query", help="dense semantic query against the index")
@@ -236,6 +242,8 @@ def main(argv: list[str] | None = None) -> int:
     pq.add_argument("-k", type=int, default=3)
     pq.add_argument("--source", help="comma list: klipper,kwc")
     pq.add_argument("--embed-url", default=None)
+    pq.add_argument("--embed-model", default=None,
+                    help="override the model recorded at build time")
     pq.add_argument("--json", action="store_true")
     pq.set_defaults(fn=cmd_query)
 
