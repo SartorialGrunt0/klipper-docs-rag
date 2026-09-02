@@ -1,0 +1,18 @@
+# bge-reranker-v2-m3 via llama.cpp — cross-encoder for klipper-rag.
+# Install (user-level) on the CachyPC:
+#   cp systemd/klipper-rerank.service ~/.config/systemd/user/
+#   systemctl --user daemon-reload && systemctl --user enable --now klipper-rerank
+[Unit]
+Description=klipper-rag reranker (bge-reranker-v2-m3, llama.cpp --rerank)
+After=network-online.target
+
+[Service]
+ExecStart=%h/apps/llama.cpp/build/bin/llama-server \
+  -m %h/models/bge-reranker-v2-m3-q8_0.gguf \
+  --embedding --pooling rank --rerank \
+  --host 127.0.0.1 --port 8101 --ctx-size 4096
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

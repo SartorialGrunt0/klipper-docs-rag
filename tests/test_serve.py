@@ -222,3 +222,62 @@ def test_domain_hint_bypasses_weak_signal(gated_service):
     # no identifier, whitened signal is 0, but "fan" is a domain noun
     chunks = gated_service.retrieve("the fan is making noise")
     assert chunks
+
+
+# --- rerank wiring --------------------------------------------------------
+
+
+class FakeReranker:
+    """Reverses candidate order; mimics RerankClient.rerank contract."""
+    max_doc_chars = 1500
+
+    def __init__(self):
+        self.queries = []
+
+    def rerank(self, query, docs, top_n=None):
+        self.queries.append(query)
+        # increasing score with index -> reverses the candidate order
+        return [float(i + 1) for i in range(len(docs))]
+
+
+def test_rerank_reorders_hybrid_results(tmp_path):
+    chunks = [
+        Chunk(id="klipper/Config_Reference::[a]", doc="Config_Reference",
+              section="[a]", source="klipper", breadcrumb="c",
+              text="first", tokens=2),
+        Chunk(id="klipper/Config_Reference::[b]", doc="Config_Reference",
+              section="[b]", source="klipper", breadcrumb="c",
+              text="second", tokens=2),
+    ]
+    idx = KbIndex(tmp_path / "kb5.sqlite", dim=3)
+    idx.save(chunks, np.array([[1, 0, 0], [0.9, 0.1, 0]],
+                              dtype=np.float32), meta={})
+    rr = FakeReranker()
+    svc = RagService(KbIndex.load(tmp_path / "kb5.sqlite"), FakeEmbed(),
+                     "http://unused.invalid/v1", "base-model",
+                     gate_threshold=None, rerank_client=rr)
+    res = svc.retrieve("anything", k=2)
+    # fake reverses: [b] before [a]
+    assert [c["section"] for c in res] == ["[b]", "[a]"]
+    assert rr.queries == ["anything"]
+
+
+def test_rerank_down_degrades_to_hybrid(tmp_path):
+    chunks = [
+        Chunk(id="klipper/Config_Reference::[a]", doc="Config_Reference",
+              section="[a]", source="klipper", breadcrumb="c",
+              text="first", tokens=2),
+    ]
+    idx = KbIndex(tmp_path / "kb6.sqlite", dim=3)
+    idx.save(chunks, np.array([[1, 0, 0]], dtype=np.float32), meta={})
+
+    class DeadReranker(FakeReranker):
+        def rerank(self, query, docs, top_n=None):
+            raise ConnectionError("reranker down")
+
+    svc = RagService(KbIndex.load(tmp_path / "kb6.sqlite"), FakeEmbed(),
+                     "http://unused.invalid/v1", "base-model",
+                     gate_threshold=None, rerank_client=DeadReranker())
+    res = svc.retrieve("anything", k=1)
+    # open-circuit: hybrid order survives
+    assert res and res[0]["section"] == "[a]"

@@ -69,6 +69,9 @@ DOMAIN_HINTS = frozenset({
     "ratros", "voron", "ebbccan", "katapult", "klippy", "gcodes",
     "kinematics", "stealthburner", "hotkey", "spider",
 })
+# Cross-encoder rescoring: 10 fused candidates -> k (eval-earned: hybrid
+# R@3 0.857/MRR 0.694 -> 0.898/0.770 at p50 74ms on the CachyPC).
+RERANK_CANDIDATES = 10
 # Stricter than retrieve._IDENT_RE: separators must sit *between* alphanums
 # (no trailing "vacation." false positives), digits must be inside a word.
 # heater_fan / tmc2209 / cycle_time / can0 match; prose does not.
@@ -94,7 +97,8 @@ class RagService:
     def __init__(self, index: KbIndex, embed: QueryEmbedder,
                  chat_url: str, base_model: str, k: int = 3,
                  max_context_chars: int = 4000,
-                 gate_threshold: float | None = DEFAULT_GATE_THRESHOLD) -> None:
+                 gate_threshold: float | None = DEFAULT_GATE_THRESHOLD,
+                 rerank_client=None) -> None:
         self.index = index
         self.embed = embed
         self.chat_url = chat_url.rstrip("/")
@@ -102,6 +106,7 @@ class RagService:
         self.k = k
         self.max_context_chars = max_context_chars
         self.gate_threshold = gate_threshold or None
+        self.rerank = rerank_client  # None or RerankClient
         self._lock = threading.Lock()  # index is read-only; embed is not reentrant-safe
         self._wmat: np.ndarray | None = None  # centroid-whitened chunk vectors
 
@@ -151,8 +156,16 @@ class RagService:
                 and top1 < self.gate_threshold:
             return {"chunks": [], "gate_passed": False,
                     "top1_cosine": top1, "ident": False}
-        hits = hybrid_search(self.index, qvec=qv, text=query,
-                             k=k or self.k)
+        kk = k or self.k
+        if self.rerank is not None:
+            from kb_rag.rerank import rerank_hybrid
+            hits = rerank_hybrid(
+                self.rerank, query,
+                lambda n: hybrid_search(self.index, qvec=qv, text=query,
+                                        k=n),
+                k=kk, candidates=RERANK_CANDIDATES)
+        else:
+            hits = hybrid_search(self.index, qvec=qv, text=query, k=kk)
         return {"chunks": [{"doc": h.chunk.doc, "section": h.chunk.section,
                             "text": h.chunk.text, "score": h.score}
                            for h in hits],
@@ -285,16 +298,25 @@ def main() -> int:
     ap.add_argument("--gate-threshold", type=float,
                     default=DEFAULT_GATE_THRESHOLD,
                     help="min top-1 dense cosine to inject docs; 0 disables")
+    ap.add_argument("--rerank-url", default=None,
+                    help="llama.cpp --rerank endpoint (e.g. "
+                         "http://127.0.0.1:8101/v1/rerank); unset disables")
     args = ap.parse_args()
 
     index = KbIndex.load(Path(args.state))
     embed = EmbedClient(base_url=args.embed_url or index.meta["embed_url"])
+    reranker = None
+    if args.rerank_url:
+        from kb_rag.rerank import RerankClient
+        reranker = RerankClient(args.rerank_url)
     Handler.service = RagService(index, embed, args.chat_url,
                                  args.base_model, k=args.k,
-                                 gate_threshold=args.gate_threshold)
+                                 gate_threshold=args.gate_threshold,
+                                 rerank_client=reranker)
     print(f"klipper-expert on :{args.port} -> {args.chat_url} "
           f"({args.base_model}), index={index.count()} chunks, "
-          f"gate={args.gate_threshold or 'OFF'}", flush=True)
+          f"gate={args.gate_threshold or 'OFF'}, "
+          f"rerank={args.rerank_url or 'OFF'}", flush=True)
     ThreadingHTTPServer((args.host, args.port), Handler).serve_forever()
     return 0
 

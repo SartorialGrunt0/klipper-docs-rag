@@ -53,16 +53,25 @@ def chunk_matches(chunk, gold_entry: list) -> bool:
 
 
 def evaluate(gold: list[dict], index: KbIndex, client: EmbedClient, k: int,
-             mode: str = "dense", sparse_weight: float = 0.5):
+             mode: str = "dense", sparse_weight: float = 0.5,
+             rerank_url: str = "http://192.168.1.135:8101/v1/rerank"):
     per_query = []
     per_cat = defaultdict(lambda: {"n": 0, "recall": 0.0, "mrr": 0.0})
     misses = []
     for item in gold:
         qv = client.embed_query(item["query"])
-        if mode == "hybrid":
+        if mode in ("hybrid", "rerank"):
             from kb_rag.retrieve import hybrid_search
-            results = hybrid_search(index, qvec=qv, text=item["query"],
-                                    k=k, sparse_weight=sparse_weight)
+            if mode == "rerank":
+                from kb_rag.rerank import RerankClient, rerank_hybrid
+                rc = RerankClient(rerank_url)
+                search_fn = lambda n, _q=item["query"]: hybrid_search(
+                    index, qvec=qv, text=_q, k=n)
+                results = rerank_hybrid(rc, item["query"], search_fn,
+                                        k=k, candidates=10)
+            else:
+                results = hybrid_search(index, qvec=qv, text=item["query"],
+                                        k=k, sparse_weight=sparse_weight)
         elif mode == "sparse":
             results = index.search_text(item["query"], k=k)
         else:
@@ -110,8 +119,10 @@ def main() -> int:
     ap.add_argument("--state", required=True)
     ap.add_argument("--gold", default=str(GOLD_PATH))
     ap.add_argument("-k", type=int, default=3)
-    ap.add_argument("--mode", choices=("dense", "sparse", "hybrid"),
+    ap.add_argument("--mode", choices=("dense", "sparse", "hybrid", "rerank"),
                     default="dense")
+    ap.add_argument("--rerank-url",
+                    default="http://192.168.1.135:8101/v1/rerank")
     ap.add_argument("--sparse-weight", type=float, default=0.5,
                     help="RRF weight of the FTS5 leg in hybrid mode")
     ap.add_argument("--embed-url", default=None)
@@ -127,7 +138,8 @@ def main() -> int:
 
     gold = load_gold(Path(args.gold))
     report = evaluate(gold, index, client, args.k, mode=args.mode,
-                      sparse_weight=args.sparse_weight)
+                      sparse_weight=args.sparse_weight,
+                      rerank_url=args.rerank_url)
 
     o = report["overall"]
     print(f"mode={args.mode} n={o['n']} k={o['k']}  "
