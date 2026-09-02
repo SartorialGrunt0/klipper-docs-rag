@@ -10,7 +10,11 @@ AI chat. Embeddings are served by a co-located
 no vector database, no heavyweight frameworks.
 
 - **Design & research:** [`docs/RAG-RESEARCH.md`](docs/RAG-RESEARCH.md)
-- **Status:** Phase 0 — structure-aware chunking + corpus stats.
+- **Status:** Phases 0–2 + serve proxy. Hybrid retrieval (eval n=103:
+  Recall@3 dense 0.835 / hybrid 0.825, sparse-only 0.553 — the identifier-
+  gated sparse leg trades ~1 pt overall recall for conceptual-bucket gains
+  and exact-identifier boosts), topic gate (centroid-whitened cosine +
+  intent bypass), OpenAI-compatible `klipper-expert` proxy.
 
 ## Quick start (dev)
 

@@ -53,7 +53,7 @@ def chunk_matches(chunk, gold_entry: list) -> bool:
 
 
 def evaluate(gold: list[dict], index: KbIndex, client: EmbedClient, k: int,
-             mode: str = "dense"):
+             mode: str = "dense", sparse_weight: float = 0.5):
     per_query = []
     per_cat = defaultdict(lambda: {"n": 0, "recall": 0.0, "mrr": 0.0})
     misses = []
@@ -61,7 +61,8 @@ def evaluate(gold: list[dict], index: KbIndex, client: EmbedClient, k: int,
         qv = client.embed_query(item["query"])
         if mode == "hybrid":
             from kb_rag.retrieve import hybrid_search
-            results = hybrid_search(index, qvec=qv, text=item["query"], k=k)
+            results = hybrid_search(index, qvec=qv, text=item["query"],
+                                    k=k, sparse_weight=sparse_weight)
         elif mode == "sparse":
             results = index.search_text(item["query"], k=k)
         else:
@@ -111,6 +112,8 @@ def main() -> int:
     ap.add_argument("-k", type=int, default=3)
     ap.add_argument("--mode", choices=("dense", "sparse", "hybrid"),
                     default="dense")
+    ap.add_argument("--sparse-weight", type=float, default=0.5,
+                    help="RRF weight of the FTS5 leg in hybrid mode")
     ap.add_argument("--embed-url", default=None)
     ap.add_argument("--json", default=None, help="write full report to file")
     args = ap.parse_args()
@@ -123,7 +126,8 @@ def main() -> int:
     client = EmbedClient(base_url=url)
 
     gold = load_gold(Path(args.gold))
-    report = evaluate(gold, index, client, args.k, mode=args.mode)
+    report = evaluate(gold, index, client, args.k, mode=args.mode,
+                      sparse_weight=args.sparse_weight)
 
     o = report["overall"]
     print(f"mode={args.mode} n={o['n']} k={o['k']}  "

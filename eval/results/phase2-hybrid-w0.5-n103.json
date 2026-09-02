@@ -1,0 +1,1234 @@
+{
+  "overall": {
+    "n": 103,
+    "k": 3,
+    "recall_at_k": 0.8252427184466019,
+    "precision_at_k": 0.3559870550161812,
+    "mrr": 0.6682847896440129
+  },
+  "by_category": {
+    "parameter": {
+      "n": 25,
+      "recall_at_k": 0.84,
+      "mrr": 0.6066666666666667
+    },
+    "conceptual": {
+      "n": 28,
+      "recall_at_k": 0.8928571428571429,
+      "mrr": 0.7738095238095237
+    },
+    "troubleshooting": {
+      "n": 27,
+      "recall_at_k": 0.8518518518518519,
+      "mrr": 0.7962962962962963
+    },
+    "macro-jinja": {
+      "n": 23,
+      "recall_at_k": 0.6956521739130435,
+      "mrr": 0.45652173913043476
+    }
+  },
+  "per_query": [
+    {
+      "id": "param-heater-fan",
+      "category": "parameter",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "param-extruder-rotation",
+      "category": "parameter",
+      "hit_ranks": [
+        1,
+        2,
+        3
+      ],
+      "recall": 1.0,
+      "precision": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "id": "param-mcu-serial",
+      "category": "parameter",
+      "hit_ranks": [
+        1,
+        3
+      ],
+      "recall": 1.0,
+      "precision": 0.6666666666666666,
+      "mrr": 1.0
+    },
+    {
+      "id": "param-tmc2209-uart",
+      "category": "parameter",
+      "hit_ranks": [
+        1,
+        3
+      ],
+      "recall": 1.0,
+      "precision": 0.6666666666666666,
+      "mrr": 1.0
+    },
+    {
+      "id": "param-fan-cycle",
+      "category": "parameter",
+      "hit_ranks": [
+        1,
+        2
+      ],
+      "recall": 1.0,
+      "precision": 0.6666666666666666,
+      "mrr": 1.0
+    },
+    {
+      "id": "param-gcode-macro-variable",
+      "category": "parameter",
+      "hit_ranks": [
+        3
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 0.3333333333333333
+    },
+    {
+      "id": "param-bed-mesh-fade",
+      "category": "parameter",
+      "hit_ranks": [
+        1,
+        2,
+        3
+      ],
+      "recall": 1.0,
+      "precision": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "id": "param-load-cell",
+      "category": "parameter",
+      "hit_ranks": [
+        3
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 0.3333333333333333
+    },
+    {
+      "id": "concept-input-shaper",
+      "category": "conceptual",
+      "hit_ranks": [
+        2
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 0.5
+    },
+    {
+      "id": "concept-kinematics",
+      "category": "conceptual",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "concept-multi-mcu",
+      "category": "conceptual",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "concept-canbus-uuid",
+      "category": "conceptual",
+      "hit_ranks": [
+        1,
+        2,
+        3
+      ],
+      "recall": 1.0,
+      "precision": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "id": "concept-resonance-measure",
+      "category": "conceptual",
+      "hit_ranks": [
+        1,
+        2
+      ],
+      "recall": 1.0,
+      "precision": 0.6666666666666666,
+      "mrr": 1.0
+    },
+    {
+      "id": "concept-z-tilt",
+      "category": "conceptual",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "trouble-lost-communication",
+      "category": "troubleshooting",
+      "hit_ranks": [
+        2
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 0.5
+    },
+    {
+      "id": "trouble-mcu-shutdown-comms",
+      "category": "troubleshooting",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "trouble-z-screech-homing",
+      "category": "troubleshooting",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "trouble-tmc-off-midprint",
+      "category": "troubleshooting",
+      "hit_ranks": [
+        1,
+        2
+      ],
+      "recall": 1.0,
+      "precision": 0.6666666666666666,
+      "mrr": 1.0
+    },
+    {
+      "id": "trouble-rpi-rebooting",
+      "category": "troubleshooting",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "macro-jinja-conditional",
+      "category": "macro-jinja",
+      "hit_ranks": [
+        2,
+        3
+      ],
+      "recall": 1.0,
+      "precision": 0.6666666666666666,
+      "mrr": 0.5
+    },
+    {
+      "id": "macro-save-state",
+      "category": "macro-jinja",
+      "hit_ranks": [
+        1,
+        3
+      ],
+      "recall": 1.0,
+      "precision": 0.6666666666666666,
+      "mrr": 1.0
+    },
+    {
+      "id": "macro-params",
+      "category": "macro-jinja",
+      "hit_ranks": [
+        2
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 0.5
+    },
+    {
+      "id": "macro-templates-intro",
+      "category": "macro-jinja",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "gcode-arcs",
+      "category": "parameter",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "status-query-temperature",
+      "category": "conceptual",
+      "hit_ranks": [
+        1,
+        2
+      ],
+      "recall": 1.0,
+      "precision": 0.6666666666666666,
+      "mrr": 1.0
+    },
+    {
+      "id": "sdcard-loop",
+      "category": "parameter",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "exclude-object",
+      "category": "conceptual",
+      "hit_ranks": [
+        2
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 0.5
+    },
+    {
+      "id": "param-stepper-step-timeout",
+      "category": "parameter",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "param-heater-bed-max-power",
+      "category": "parameter",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "param-verify-heater",
+      "category": "parameter",
+      "hit_ranks": [
+        2
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 0.5
+    },
+    {
+      "id": "param-adxl345-pins",
+      "category": "parameter",
+      "hit_ranks": [
+        2
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 0.5
+    },
+    {
+      "id": "param-resonance-tester",
+      "category": "parameter",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "param-firmware-retraction",
+      "category": "parameter",
+      "hit_ranks": [
+        3
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 0.3333333333333333
+    },
+    {
+      "id": "param-virtual-sdcard-path",
+      "category": "parameter",
+      "hit_ranks": [
+        2
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 0.5
+    },
+    {
+      "id": "param-output-pin-fade",
+      "category": "parameter",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "param-temperature-fan-min",
+      "category": "parameter",
+      "hit_ranks": [
+        2,
+        3
+      ],
+      "recall": 1.0,
+      "precision": 0.6666666666666666,
+      "mrr": 0.5
+    },
+    {
+      "id": "param-neopixel-count",
+      "category": "parameter",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "param-probe-speed",
+      "category": "parameter",
+      "hit_ranks": [
+        3
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 0.3333333333333333
+    },
+    {
+      "id": "param-idle-timeout",
+      "category": "parameter",
+      "hit_ranks": [
+        2
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 0.5
+    },
+    {
+      "id": "param-multi-pin",
+      "category": "parameter",
+      "hit_ranks": [
+        3
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 0.3333333333333333
+    },
+    {
+      "id": "param-printer-limits",
+      "category": "parameter",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "param-tmc5160-spi",
+      "category": "parameter",
+      "hit_ranks": [
+        1,
+        2
+      ],
+      "recall": 1.0,
+      "precision": 0.6666666666666666,
+      "mrr": 1.0
+    },
+    {
+      "id": "concept-trapezoid",
+      "category": "conceptual",
+      "hit_ranks": [
+        3
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 0.3333333333333333
+    },
+    {
+      "id": "concept-lookahead",
+      "category": "conceptual",
+      "hit_ranks": [
+        2
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 0.5
+    },
+    {
+      "id": "concept-klippy-role",
+      "category": "conceptual",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "concept-move-flow",
+      "category": "conceptual",
+      "hit_ranks": [
+        2
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 0.5
+    },
+    {
+      "id": "concept-time-sync",
+      "category": "conceptual",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "concept-coordinate-systems",
+      "category": "conceptual",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "concept-mesh-interpolation",
+      "category": "conceptual",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "concept-adaptive-mesh",
+      "category": "conceptual",
+      "hit_ranks": [
+        1,
+        2
+      ],
+      "recall": 1.0,
+      "precision": 0.6666666666666666,
+      "mrr": 1.0
+    },
+    {
+      "id": "concept-rapid-scan-probe",
+      "category": "conceptual",
+      "hit_ranks": [
+        1,
+        2
+      ],
+      "recall": 1.0,
+      "precision": 0.6666666666666666,
+      "mrr": 1.0
+    },
+    {
+      "id": "concept-endstop-phase",
+      "category": "conceptual",
+      "hit_ranks": [
+        3
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 0.3333333333333333
+    },
+    {
+      "id": "concept-skew-correction",
+      "category": "conceptual",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "concept-pressure-advance-why",
+      "category": "conceptual",
+      "hit_ranks": [
+        1,
+        2,
+        3
+      ],
+      "recall": 1.0,
+      "precision": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "id": "concept-sensorless-homing",
+      "category": "conceptual",
+      "hit_ranks": [
+        1,
+        3
+      ],
+      "recall": 1.0,
+      "precision": 0.6666666666666666,
+      "mrr": 1.0
+    },
+    {
+      "id": "concept-stealthchop-spreadcycle",
+      "category": "conceptual",
+      "hit_ranks": [
+        1,
+        2
+      ],
+      "recall": 1.0,
+      "precision": 0.6666666666666666,
+      "mrr": 1.0
+    },
+    {
+      "id": "concept-tmc-interpolate",
+      "category": "conceptual",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "concept-shaper-z-axis",
+      "category": "conceptual",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "concept-pt1000",
+      "category": "conceptual",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "concept-motion-vs-switch-sensor",
+      "category": "conceptual",
+      "hit_ranks": [
+        1,
+        3
+      ],
+      "recall": 1.0,
+      "precision": 0.6666666666666666,
+      "mrr": 1.0
+    },
+    {
+      "id": "concept-shaketune",
+      "category": "conceptual",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "concept-update-manager",
+      "category": "conceptual",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "trouble-usb-port-changes",
+      "category": "troubleshooting",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "trouble-make-flash-fails",
+      "category": "troubleshooting",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "trouble-cannot-move-before-home",
+      "category": "troubleshooting",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "trouble-tmc-overtemp",
+      "category": "troubleshooting",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "trouble-tmc-shorttognd",
+      "category": "troubleshooting",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "trouble-tmc-uart-ifcnt",
+      "category": "troubleshooting",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "trouble-tmc-undervoltage",
+      "category": "troubleshooting",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "trouble-can-bytes-invalid",
+      "category": "troubleshooting",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "trouble-can-enobufs",
+      "category": "troubleshooting",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "trouble-can-termination",
+      "category": "troubleshooting",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "trouble-pin-conflict",
+      "category": "troubleshooting",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "trouble-config-parse-error",
+      "category": "troubleshooting",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "trouble-heater-timeout",
+      "category": "troubleshooting",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "trouble-verify-temperature",
+      "category": "troubleshooting",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "trouble-verify-m112",
+      "category": "troubleshooting",
+      "hit_ranks": [
+        2
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 0.5
+    },
+    {
+      "id": "trouble-sdflash-init-fail",
+      "category": "troubleshooting",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "trouble-shaper-unreliable",
+      "category": "troubleshooting",
+      "hit_ranks": [
+        1,
+        3
+      ],
+      "recall": 1.0,
+      "precision": 0.6666666666666666,
+      "mrr": 1.0
+    },
+    {
+      "id": "trouble-shaper-returns",
+      "category": "troubleshooting",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "trouble-shaper-smoothed",
+      "category": "troubleshooting",
+      "hit_ranks": [
+        2
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 0.5
+    },
+    {
+      "id": "trouble-cancel-m109",
+      "category": "troubleshooting",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "trouble-tmc-reset",
+      "category": "troubleshooting",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "trouble-lost-steps",
+      "category": "troubleshooting",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "macro-naming",
+      "category": "macro-jinja",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "macro-indentation",
+      "category": "macro-jinja",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "macro-help-description",
+      "category": "macro-jinja",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "macro-save-restore-state",
+      "category": "macro-jinja",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "macro-template-expansion",
+      "category": "macro-jinja",
+      "hit_ranks": [
+        2
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 0.5
+    },
+    {
+      "id": "macro-rawparams",
+      "category": "macro-jinja",
+      "hit_ranks": [
+        2
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 0.5
+    },
+    {
+      "id": "macro-printer-object",
+      "category": "macro-jinja",
+      "hit_ranks": [
+        1,
+        3
+      ],
+      "recall": 1.0,
+      "precision": 0.6666666666666666,
+      "mrr": 1.0
+    },
+    {
+      "id": "macro-conditional-actions",
+      "category": "macro-jinja",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "macro-jinja-variables",
+      "category": "macro-jinja",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "macro-delayed-run",
+      "category": "macro-jinja",
+      "hit_ranks": [
+        3
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 0.3333333333333333
+    },
+    {
+      "id": "macro-lcd-menu",
+      "category": "macro-jinja",
+      "hit_ranks": [
+        3
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 0.3333333333333333
+    },
+    {
+      "id": "macro-persist-variable",
+      "category": "macro-jinja",
+      "hit_ranks": [
+        3
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 0.3333333333333333
+    },
+    {
+      "id": "macro-respond-message",
+      "category": "macro-jinja",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "macro-get-position",
+      "category": "macro-jinja",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "macro-z-offset-gcode",
+      "category": "macro-jinja",
+      "hit_ranks": [
+        2
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 0.5
+    },
+    {
+      "id": "macro-temperature-wait",
+      "category": "macro-jinja",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "macro-set-variable-runtime",
+      "category": "macro-jinja",
+      "hit_ranks": [
+        2
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 0.5
+    },
+    {
+      "id": "macro-print-stats-status",
+      "category": "macro-jinja",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "macro-coords-in-template",
+      "category": "macro-jinja",
+      "hit_ranks": [
+        2
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 0.5
+    }
+  ],
+  "misses": [
+    {
+      "id": "concept-multi-mcu",
+      "category": "conceptual",
+      "query": "Can I use more than one micro-controller board in one printer?",
+      "top": [
+        "Installation::Building and flashing the micro-controller",
+        "Features::Features",
+        "RPi_microcontroller::Why use RPi as a secondary MCU?"
+      ]
+    },
+    {
+      "id": "sdcard-loop",
+      "category": "parameter",
+      "query": "How do I repeat a section of a gcode file while printing?",
+      "top": [
+        "Command_Templates::Delayed Gcodes",
+        "Slicers::Klipper gcode_macro",
+        "G-Codes::[palette2]"
+      ]
+    },
+    {
+      "id": "param-heater-bed-max-power",
+      "category": "parameter",
+      "query": "How do I limit the heated bed to 80 percent of its power?",
+      "top": [
+        "Bed_Level::Determining Thermal Expansion",
+        "Bed_Level::Determining Thermal Expansion",
+        "Config_checks::Calibrate PID settings"
+      ]
+    },
+    {
+      "id": "param-resonance-tester",
+      "category": "parameter",
+      "query": "How do I change the minimum test duration for resonance_tester?",
+      "top": [
+        "G-Codes::SHAPER_CALIBRATE",
+        "G-Codes::[resonance_tester]",
+        "Measuring_Resonances::Measuring the resonances of Z axis"
+      ]
+    },
+    {
+      "id": "param-printer-limits",
+      "category": "parameter",
+      "query": "Where is max_accel configured and what is the default square_corner_velocity?",
+      "top": [
+        "Measuring_Resonances::Selecting max_accel",
+        "Resonance_Compensation::After enabling [input_shaper], I get too smoothed printed parts and fine details are lost",
+        "Resonance_Compensation::Selecting max_accel"
+      ]
+    },
+    {
+      "id": "concept-time-sync",
+      "category": "conceptual",
+      "query": "How do the host and the micro-controller stay synchronized on time?",
+      "top": [
+        "Code_Overview::Micro-controller code flow",
+        "MCU_Commands::Low-level micro-controller configuration",
+        "MCU_Commands::Low-level micro-controller configuration"
+      ]
+    },
+    {
+      "id": "concept-shaketune",
+      "category": "conceptual",
+      "query": "What does the shaketune tool measure and how does it help input shaper tuning?",
+      "top": [
+        "Measuring_Resonances::Max smoothing",
+        "Resonance_Compensation::Input shapers",
+        "Resonance_Compensation::Input shaper configuration"
+      ]
+    },
+    {
+      "id": "trouble-can-bytes-invalid",
+      "category": "troubleshooting",
+      "query": "How do I check whether my CAN bus is corrupting messages?",
+      "top": [
+        "CANBUS_Troubleshooting::Verify CAN bus wiring",
+        "CANBUS_Troubleshooting::Obtaining candump logs",
+        "CANBUS_Troubleshooting::Use an appropriate txqueuelen setting"
+      ]
+    },
+    {
+      "id": "trouble-can-enobufs",
+      "category": "troubleshooting",
+      "query": "I get CAN write queue errors during printing, what setting should I raise?",
+      "top": [
+        "CANBUS_Troubleshooting::Check for incrementing bytes_invalid counter",
+        "FAQ::Why does Klipper report errors? I lost my print!",
+        "mainsail-cfg::Advanced"
+      ]
+    },
+    {
+      "id": "trouble-heater-timeout",
+      "category": "troubleshooting",
+      "query": "I get a heater timeout error while the bed is trying to heat up",
+      "top": [
+        "FAQ::Will the heaters be left on if the Raspberry Pi crashes?",
+        "Config_checks::Verify heaters",
+        "Config_Reference::[heater_bed]"
+      ]
+    },
+    {
+      "id": "trouble-shaper-returns",
+      "category": "troubleshooting",
+      "query": "Ringing came back on my prints after working fine for weeks with input shaper enabled",
+      "top": [
+        "Resonance_Compensation::Resonance Compensation",
+        "Resonance_Compensation::Does input_shaper affect print time?",
+        "Resonance_Compensation::Ringing frequency"
+      ]
+    },
+    {
+      "id": "macro-indentation",
+      "category": "macro-jinja",
+      "query": "Why does my macro break when I indent the Jinja inside it?",
+      "top": [
+        "Klipper_GCode_Macro_AI_Summary::Jinja formatting (Klipper specifics)",
+        "Klipper_GCode_Macro_AI_Summary::Jinja formatting (Klipper specifics)",
+        "Klipper_GCode_Macro_AI_Summary::Jinja formatting (Klipper specifics)"
+      ]
+    },
+    {
+      "id": "macro-save-restore-state",
+      "category": "macro-jinja",
+      "query": "How do I make sure my macro doesn't mess up coordinate transforms or speed?",
+      "top": [
+        "klippain_shaketune::Installation",
+        "Klipper_GCode_Macro_AI_Summary::Macro-state and motion-state helpers",
+        "TMC_Drivers::Using Macros when Homing"
+      ]
+    },
+    {
+      "id": "macro-conditional-actions",
+      "category": "macro-jinja",
+      "query": "How do I conditionally run gcode in a macro depending on a Jinja if statement?",
+      "top": [
+        "Command_Templates::Template expansion",
+        "Klipper_GCode_Macro_AI_Summary::Jinja formatting (Klipper specifics)",
+        "Klipper_GCode_Macro_AI_Summary::Jinja formatting (Klipper specifics)"
+      ]
+    },
+    {
+      "id": "macro-jinja-variables",
+      "category": "macro-jinja",
+      "query": "How do Jinja variables work inside gcode macros?",
+      "top": [
+        "Klipper_GCode_Macro_AI_Summary::Jinja formatting (Klipper specifics)",
+        "Command_Templates::Template expansion",
+        "Klipper_GCode_Macro_AI_Summary::Jinja formatting (Klipper specifics)"
+      ]
+    },
+    {
+      "id": "macro-respond-message",
+      "category": "macro-jinja",
+      "query": "How do I print a message to the console from inside a macro?",
+      "top": [
+        "mainsail-cfg::Macro hooks",
+        "Command_Templates::Actions",
+        "Slicers::START_PRINT macros"
+      ]
+    },
+    {
+      "id": "macro-get-position",
+      "category": "macro-jinja",
+      "query": "How do I read the current toolhead position into a macro?",
+      "top": [
+        "Status_Reference::toolhead",
+        "Status_Reference::Accessing Coordinates",
+        "mainsail-cfg::Park position"
+      ]
+    },
+    {
+      "id": "macro-temperature-wait",
+      "category": "macro-jinja",
+      "query": "How do I pause a macro until the extruder reaches a temperature?",
+      "top": [
+        "Slicers::START_PRINT macros",
+        "Config_checks::Verify heaters",
+        "Config_checks::Verify extruder motor"
+      ]
+    }
+  ]
+}

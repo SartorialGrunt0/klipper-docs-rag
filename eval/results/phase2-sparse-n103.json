@@ -1,0 +1,1443 @@
+{
+  "overall": {
+    "n": 103,
+    "k": 3,
+    "recall_at_k": 0.5533980582524272,
+    "precision_at_k": 0.21682847896440127,
+    "mrr": 0.4773462783171521
+  },
+  "by_category": {
+    "parameter": {
+      "n": 25,
+      "recall_at_k": 0.64,
+      "mrr": 0.4933333333333334
+    },
+    "conceptual": {
+      "n": 28,
+      "recall_at_k": 0.6785714285714286,
+      "mrr": 0.5654761904761905
+    },
+    "troubleshooting": {
+      "n": 27,
+      "recall_at_k": 0.7037037037037037,
+      "mrr": 0.6666666666666666
+    },
+    "macro-jinja": {
+      "n": 23,
+      "recall_at_k": 0.13043478260869565,
+      "mrr": 0.13043478260869565
+    }
+  },
+  "per_query": [
+    {
+      "id": "param-heater-fan",
+      "category": "parameter",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "param-extruder-rotation",
+      "category": "parameter",
+      "hit_ranks": [
+        1,
+        2
+      ],
+      "recall": 1.0,
+      "precision": 0.6666666666666666,
+      "mrr": 1.0
+    },
+    {
+      "id": "param-mcu-serial",
+      "category": "parameter",
+      "hit_ranks": [
+        3
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 0.3333333333333333
+    },
+    {
+      "id": "param-tmc2209-uart",
+      "category": "parameter",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "param-fan-cycle",
+      "category": "parameter",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "param-gcode-macro-variable",
+      "category": "parameter",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "param-bed-mesh-fade",
+      "category": "parameter",
+      "hit_ranks": [
+        1,
+        2,
+        3
+      ],
+      "recall": 1.0,
+      "precision": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "id": "param-load-cell",
+      "category": "parameter",
+      "hit_ranks": [
+        1,
+        2,
+        3
+      ],
+      "recall": 1.0,
+      "precision": 1.0,
+      "mrr": 1.0
+    },
+    {
+      "id": "concept-input-shaper",
+      "category": "conceptual",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "concept-kinematics",
+      "category": "conceptual",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "concept-multi-mcu",
+      "category": "conceptual",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "concept-canbus-uuid",
+      "category": "conceptual",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "concept-resonance-measure",
+      "category": "conceptual",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "concept-z-tilt",
+      "category": "conceptual",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "trouble-lost-communication",
+      "category": "troubleshooting",
+      "hit_ranks": [
+        2
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 0.5
+    },
+    {
+      "id": "trouble-mcu-shutdown-comms",
+      "category": "troubleshooting",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "trouble-z-screech-homing",
+      "category": "troubleshooting",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "trouble-tmc-off-midprint",
+      "category": "troubleshooting",
+      "hit_ranks": [
+        1,
+        2
+      ],
+      "recall": 1.0,
+      "precision": 0.6666666666666666,
+      "mrr": 1.0
+    },
+    {
+      "id": "trouble-rpi-rebooting",
+      "category": "troubleshooting",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "macro-jinja-conditional",
+      "category": "macro-jinja",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "macro-save-state",
+      "category": "macro-jinja",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "macro-params",
+      "category": "macro-jinja",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "macro-templates-intro",
+      "category": "macro-jinja",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "gcode-arcs",
+      "category": "parameter",
+      "hit_ranks": [
+        2
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 0.5
+    },
+    {
+      "id": "status-query-temperature",
+      "category": "conceptual",
+      "hit_ranks": [
+        2
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 0.5
+    },
+    {
+      "id": "sdcard-loop",
+      "category": "parameter",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "exclude-object",
+      "category": "conceptual",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "param-stepper-step-timeout",
+      "category": "parameter",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "param-heater-bed-max-power",
+      "category": "parameter",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "param-verify-heater",
+      "category": "parameter",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "param-adxl345-pins",
+      "category": "parameter",
+      "hit_ranks": [
+        3
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 0.3333333333333333
+    },
+    {
+      "id": "param-resonance-tester",
+      "category": "parameter",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "param-firmware-retraction",
+      "category": "parameter",
+      "hit_ranks": [
+        3
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 0.3333333333333333
+    },
+    {
+      "id": "param-virtual-sdcard-path",
+      "category": "parameter",
+      "hit_ranks": [
+        2
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 0.5
+    },
+    {
+      "id": "param-output-pin-fade",
+      "category": "parameter",
+      "hit_ranks": [
+        3
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 0.3333333333333333
+    },
+    {
+      "id": "param-temperature-fan-min",
+      "category": "parameter",
+      "hit_ranks": [
+        1,
+        2
+      ],
+      "recall": 1.0,
+      "precision": 0.6666666666666666,
+      "mrr": 1.0
+    },
+    {
+      "id": "param-neopixel-count",
+      "category": "parameter",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "param-probe-speed",
+      "category": "parameter",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "param-idle-timeout",
+      "category": "parameter",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "param-multi-pin",
+      "category": "parameter",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "param-printer-limits",
+      "category": "parameter",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "param-tmc5160-spi",
+      "category": "parameter",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "concept-trapezoid",
+      "category": "conceptual",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "concept-lookahead",
+      "category": "conceptual",
+      "hit_ranks": [
+        2
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 0.5
+    },
+    {
+      "id": "concept-klippy-role",
+      "category": "conceptual",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "concept-move-flow",
+      "category": "conceptual",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "concept-time-sync",
+      "category": "conceptual",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "concept-coordinate-systems",
+      "category": "conceptual",
+      "hit_ranks": [
+        3
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 0.3333333333333333
+    },
+    {
+      "id": "concept-mesh-interpolation",
+      "category": "conceptual",
+      "hit_ranks": [
+        2
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 0.5
+    },
+    {
+      "id": "concept-adaptive-mesh",
+      "category": "conceptual",
+      "hit_ranks": [
+        2,
+        3
+      ],
+      "recall": 1.0,
+      "precision": 0.6666666666666666,
+      "mrr": 0.5
+    },
+    {
+      "id": "concept-rapid-scan-probe",
+      "category": "conceptual",
+      "hit_ranks": [
+        1,
+        3
+      ],
+      "recall": 1.0,
+      "precision": 0.6666666666666666,
+      "mrr": 1.0
+    },
+    {
+      "id": "concept-endstop-phase",
+      "category": "conceptual",
+      "hit_ranks": [
+        2
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 0.5
+    },
+    {
+      "id": "concept-skew-correction",
+      "category": "conceptual",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "concept-pressure-advance-why",
+      "category": "conceptual",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "concept-sensorless-homing",
+      "category": "conceptual",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "concept-stealthchop-spreadcycle",
+      "category": "conceptual",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "concept-tmc-interpolate",
+      "category": "conceptual",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "concept-shaper-z-axis",
+      "category": "conceptual",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "concept-pt1000",
+      "category": "conceptual",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "concept-motion-vs-switch-sensor",
+      "category": "conceptual",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "concept-shaketune",
+      "category": "conceptual",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "concept-update-manager",
+      "category": "conceptual",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "trouble-usb-port-changes",
+      "category": "troubleshooting",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "trouble-make-flash-fails",
+      "category": "troubleshooting",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "trouble-cannot-move-before-home",
+      "category": "troubleshooting",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "trouble-tmc-overtemp",
+      "category": "troubleshooting",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "trouble-tmc-shorttognd",
+      "category": "troubleshooting",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "trouble-tmc-uart-ifcnt",
+      "category": "troubleshooting",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "trouble-tmc-undervoltage",
+      "category": "troubleshooting",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "trouble-can-bytes-invalid",
+      "category": "troubleshooting",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "trouble-can-enobufs",
+      "category": "troubleshooting",
+      "hit_ranks": [
+        2,
+        3
+      ],
+      "recall": 1.0,
+      "precision": 0.6666666666666666,
+      "mrr": 0.5
+    },
+    {
+      "id": "trouble-can-termination",
+      "category": "troubleshooting",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "trouble-pin-conflict",
+      "category": "troubleshooting",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "trouble-config-parse-error",
+      "category": "troubleshooting",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "trouble-heater-timeout",
+      "category": "troubleshooting",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "trouble-verify-temperature",
+      "category": "troubleshooting",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "trouble-verify-m112",
+      "category": "troubleshooting",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "trouble-sdflash-init-fail",
+      "category": "troubleshooting",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "trouble-shaper-unreliable",
+      "category": "troubleshooting",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "trouble-shaper-returns",
+      "category": "troubleshooting",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "trouble-shaper-smoothed",
+      "category": "troubleshooting",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "trouble-cancel-m109",
+      "category": "troubleshooting",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "trouble-tmc-reset",
+      "category": "troubleshooting",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "trouble-lost-steps",
+      "category": "troubleshooting",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "macro-naming",
+      "category": "macro-jinja",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "macro-indentation",
+      "category": "macro-jinja",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "macro-help-description",
+      "category": "macro-jinja",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "macro-save-restore-state",
+      "category": "macro-jinja",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "macro-template-expansion",
+      "category": "macro-jinja",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "macro-rawparams",
+      "category": "macro-jinja",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "macro-printer-object",
+      "category": "macro-jinja",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "macro-conditional-actions",
+      "category": "macro-jinja",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "macro-jinja-variables",
+      "category": "macro-jinja",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "macro-delayed-run",
+      "category": "macro-jinja",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "macro-lcd-menu",
+      "category": "macro-jinja",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "macro-persist-variable",
+      "category": "macro-jinja",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "macro-respond-message",
+      "category": "macro-jinja",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "macro-get-position",
+      "category": "macro-jinja",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "macro-z-offset-gcode",
+      "category": "macro-jinja",
+      "hit_ranks": [
+        1
+      ],
+      "recall": 1.0,
+      "precision": 0.3333333333333333,
+      "mrr": 1.0
+    },
+    {
+      "id": "macro-temperature-wait",
+      "category": "macro-jinja",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "macro-set-variable-runtime",
+      "category": "macro-jinja",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "macro-print-stats-status",
+      "category": "macro-jinja",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    },
+    {
+      "id": "macro-coords-in-template",
+      "category": "macro-jinja",
+      "hit_ranks": [],
+      "recall": 0.0,
+      "precision": 0.0,
+      "mrr": 0.0
+    }
+  ],
+  "misses": [
+    {
+      "id": "param-gcode-macro-variable",
+      "category": "parameter",
+      "query": "How do I declare a variable in a gcode_macro section?",
+      "top": [
+        "FAQ::How do I calculate the rotation_distance config parameter?",
+        "Status_Reference::gcode_macro",
+        "TMC_Drivers::How do I tune spreadCycle/coolStep/etc. mode on my drivers?"
+      ]
+    },
+    {
+      "id": "concept-input-shaper",
+      "category": "conceptual",
+      "query": "Why do I get wavy patterns on the edges of my prints and how does the firmware fix it?",
+      "top": [
+        "FAQ::My Raspberry Pi keeps rebooting during prints",
+        "TMC_Drivers::How do I tune spreadCycle/coolStep/etc. mode on my drivers?",
+        "FAQ::Why does Klipper report errors? I lost my print!"
+      ]
+    },
+    {
+      "id": "concept-multi-mcu",
+      "category": "conceptual",
+      "query": "Can I use more than one micro-controller board in one printer?",
+      "top": [
+        "FAQ::I keep getting random \"Lost communication with MCU\" errors",
+        "Installation::Building and flashing the micro-controller",
+        "Installation::Installation"
+      ]
+    },
+    {
+      "id": "concept-resonance-measure",
+      "category": "conceptual",
+      "query": "How do I measure my printer's resonant frequencies with an accelerometer?",
+      "top": [
+        "Resonance_Compensation::I cannot get reliable measurements of resonance frequencies",
+        "TMC_Drivers::How do I tune spreadCycle/coolStep/etc. mode on my drivers?",
+        "FAQ::My TMC motor driver turns off in the middle of a print"
+      ]
+    },
+    {
+      "id": "concept-z-tilt",
+      "category": "conceptual",
+      "query": "How does the firmware level a gantry with multiple Z steppers?",
+      "top": [
+        "klipper-config-errors-catalog::Steppers, Homing, Probing",
+        "Config_Reference::Generic Cartesian Kinematics",
+        "klipper-config-errors-catalog::`generic_cartesian.py`"
+      ]
+    },
+    {
+      "id": "trouble-mcu-shutdown-comms",
+      "category": "troubleshooting",
+      "query": "I get MCU shutdown: Communication timeout on my CAN toolboard, where do I start?",
+      "top": [
+        "FAQ::My Raspberry Pi keeps rebooting during prints",
+        "TMC_Drivers::Why did I get a \"TMC reports error: ...\" error?",
+        "TMC_Drivers::How do I tune spreadCycle/coolStep/etc. mode on my drivers?"
+      ]
+    },
+    {
+      "id": "macro-jinja-conditional",
+      "category": "macro-jinja",
+      "query": "How do I use an if statement inside a macro to check a temperature?",
+      "top": [
+        "FAQ::How do I cancel an M109/M190 \"wait for temperature\" request?",
+        "FAQ::How do I calculate the rotation_distance config parameter?",
+        "FAQ::How do I uninstall Klipper?"
+      ]
+    },
+    {
+      "id": "macro-save-state",
+      "category": "macro-jinja",
+      "query": "How can I keep a value between two calls to the same macro?",
+      "top": [
+        "mainsail-cfg::Reuse the PAUSE macro",
+        "FAQ::My Raspberry Pi keeps rebooting during prints",
+        "Hall_Filament_Width_Sensor::How does it work?"
+      ]
+    },
+    {
+      "id": "macro-params",
+      "category": "macro-jinja",
+      "query": "How do I pass arguments to a custom gcode command?",
+      "top": [
+        "G-Codes::RESTART",
+        "FAQ::How do I calculate the rotation_distance config parameter?",
+        "TMC_Drivers::How do I tune spreadCycle/coolStep/etc. mode on my drivers?"
+      ]
+    },
+    {
+      "id": "macro-templates-intro",
+      "category": "macro-jinja",
+      "query": "What template language does Klipper use for macros?",
+      "top": [
+        "Klipper_Docs_AI_Summary::Macros, templates, and delayed G-Code",
+        "Klipper_GCode_Macro_AI_Summary::Macro rules",
+        "klipper-config-errors-catalog::Macros & G-Code"
+      ]
+    },
+    {
+      "id": "sdcard-loop",
+      "category": "parameter",
+      "query": "How do I repeat a section of a gcode file while printing?",
+      "top": [
+        "FAQ::How do I calculate the rotation_distance config parameter?",
+        "G-Codes::RESTART",
+        "TMC_Drivers::How do I tune spreadCycle/coolStep/etc. mode on my drivers?"
+      ]
+    },
+    {
+      "id": "exclude-object",
+      "category": "conceptual",
+      "query": "How can I cancel one object in a multi-part print?",
+      "top": [
+        "FAQ::How do I cancel an M109/M190 \"wait for temperature\" request?",
+        "FAQ::Why can't I move the stepper before homing the printer?",
+        "Features::Additional features"
+      ]
+    },
+    {
+      "id": "param-stepper-step-timeout",
+      "category": "parameter",
+      "query": "What does step_timeout do in the stepper config?",
+      "top": [
+        "Config_Reference::[tmc2660]",
+        "Contact::I found a bug in the Klipper software",
+        "FAQ::Why can't I move the stepper before homing the printer?"
+      ]
+    },
+    {
+      "id": "param-heater-bed-max-power",
+      "category": "parameter",
+      "query": "How do I limit the heated bed to 80 percent of its power?",
+      "top": [
+        "FAQ::How do I calculate the rotation_distance config parameter?",
+        "G-Codes::RESTART",
+        "TMC_Drivers::How do I tune spreadCycle/coolStep/etc. mode on my drivers?"
+      ]
+    },
+    {
+      "id": "param-resonance-tester",
+      "category": "parameter",
+      "query": "How do I change the minimum test duration for resonance_tester?",
+      "top": [
+        "Measuring_Resonances::Measuring the resonances of Z axis",
+        "FAQ::How do I calculate the rotation_distance config parameter?",
+        "FAQ::How do I change the serial baud rate?"
+      ]
+    },
+    {
+      "id": "param-neopixel-count",
+      "category": "parameter",
+      "query": "How many LEDs does the neopixel section expect and how do I set their initial color?",
+      "top": [
+        "Status_Reference::led",
+        "G-Codes::SET_LED",
+        "klipper-config-errors-catalog::LEDs, PWM, Pins"
+      ]
+    },
+    {
+      "id": "param-probe-speed",
+      "category": "parameter",
+      "query": "What parameter changes the speed the probe travels at?",
+      "top": [
+        "Config_Changes::Changes",
+        "Config_Reference::[tmc2660]",
+        "Kinematics::Minimum cruise ratio"
+      ]
+    },
+    {
+      "id": "param-multi-pin",
+      "category": "parameter",
+      "query": "How do I drive two pins as a single fan?",
+      "top": [
+        "Hall_Filament_Width_Sensor::How does it work?",
+        "FAQ::How do I calculate the rotation_distance config parameter?",
+        "Config_Reference::Generic Cartesian Kinematics"
+      ]
+    },
+    {
+      "id": "param-printer-limits",
+      "category": "parameter",
+      "query": "Where is max_accel configured and what is the default square_corner_velocity?",
+      "top": [
+        "Measuring_Resonances::Selecting max_accel",
+        "Resonance_Compensation::After enabling [input_shaper], I get too smoothed printed parts and fine details are lost",
+        "Measuring_Resonances::Max smoothing"
+      ]
+    },
+    {
+      "id": "concept-trapezoid",
+      "category": "conceptual",
+      "query": "Why does Klipper accelerate and decelerate through moves instead of moving at a constant speed?",
+      "top": [
+        "Config_Reference::[printer]",
+        "Kinematics::Look-ahead",
+        "Features::Additional features"
+      ]
+    },
+    {
+      "id": "concept-move-flow",
+      "category": "conceptual",
+      "query": "What happens between sending a G1 command and the stepper motor actually moving?",
+      "top": [
+        "G-Codes::MANUAL_STEPPER",
+        "FAQ::Can I find out whether the printer has lost steps?",
+        "Command_Templates::Save/Restore state for G-Code moves"
+      ]
+    },
+    {
+      "id": "concept-motion-vs-switch-sensor",
+      "category": "conceptual",
+      "query": "How does a filament motion sensor differ from a simple filament switch?",
+      "top": [
+        "TSL1401CL_Filament_Width_Sensor::How does it work?",
+        "Hall_Filament_Width_Sensor::How does it work?",
+        "Hall_Filament_Width_Sensor::Use as a runout switch only"
+      ]
+    },
+    {
+      "id": "concept-update-manager",
+      "category": "conceptual",
+      "query": "How does Klipper's update manager decide what to keep up to date?",
+      "top": [
+        "update_manager::Get update status",
+        "update_manager::Get update status",
+        "update_manager::Get update status"
+      ]
+    },
+    {
+      "id": "trouble-can-bytes-invalid",
+      "category": "troubleshooting",
+      "query": "How do I check whether my CAN bus is corrupting messages?",
+      "top": [
+        "TMC_Drivers::How do I tune spreadCycle/coolStep/etc. mode on my drivers?",
+        "FAQ::My TMC motor driver turns off in the middle of a print",
+        "FAQ::My Raspberry Pi keeps rebooting during prints"
+      ]
+    },
+    {
+      "id": "trouble-pin-conflict",
+      "category": "troubleshooting",
+      "query": "Klipper complains that a pin conflicts with another pin - how do I resolve it?",
+      "top": [
+        "FAQ::How do I convert a Marlin pin number to a Klipper pin name?",
+        "FAQ::How do I calculate the rotation_distance config parameter?",
+        "TMC_Drivers::How do I tune spreadCycle/coolStep/etc. mode on my drivers?"
+      ]
+    },
+    {
+      "id": "trouble-config-parse-error",
+      "category": "troubleshooting",
+      "query": "My config fails to parse right after I edited it, where should I look first?",
+      "top": [
+        "FAQ::Where's my serial port?",
+        "FAQ::I converted my config from Marlin and the X/Y axes work fine, but I just get a screeching noise when homing the Z axis",
+        "Manual_Level::Adjusting bed leveling screws using the bed probe"
+      ]
+    },
+    {
+      "id": "trouble-heater-timeout",
+      "category": "troubleshooting",
+      "query": "I get a heater timeout error while the bed is trying to heat up",
+      "top": [
+        "Load_Cell::Nozzle Cleaning",
+        "TMC_Drivers::TMC reports error: `... uv_cp=1(Undervoltage!)`",
+        "TMC_Drivers::Why did I get a \"TMC reports error: ...\" error?"
+      ]
+    },
+    {
+      "id": "trouble-verify-temperature",
+      "category": "troubleshooting",
+      "query": "How do I sanity check that my temperature sensors read correctly before printing?",
+      "top": [
+        "TMC_Drivers::How do I tune spreadCycle/coolStep/etc. mode on my drivers?",
+        "FAQ::My TMC motor driver turns off in the middle of a print",
+        "Load_Cell::Reading Force Data"
+      ]
+    },
+    {
+      "id": "trouble-verify-m112",
+      "category": "troubleshooting",
+      "query": "How do I test that the emergency stop M112 actually works?",
+      "top": [
+        "FAQ::How do I cancel an M109/M190 \"wait for temperature\" request?",
+        "Measuring_Resonances::Measuring the resonances",
+        "FAQ::How do I calculate the rotation_distance config parameter?"
+      ]
+    },
+    {
+      "id": "trouble-shaper-returns",
+      "category": "troubleshooting",
+      "query": "Ringing came back on my prints after working fine for weeks with input shaper enabled",
+      "top": [
+        "Resonance_Compensation::Fine-tuning resonance frequencies",
+        "Resonance_Compensation::Should I enable and tune input shaper for Z axis?",
+        "Klipper_Docs_AI_Summary::Resonance, accelerometers, and input shaping"
+      ]
+    },
+    {
+      "id": "macro-naming",
+      "category": "macro-jinja",
+      "query": "What naming convention should I use for my gcode macros?",
+      "top": [
+        "FAQ::I converted my config from Marlin and the X/Y axes work fine, but I just get a screeching noise when homing the Z axis",
+        "CONTRIBUTING::Helping with reviews",
+        "TMC_Drivers::How do I tune spreadCycle/coolStep/etc. mode on my drivers?"
+      ]
+    },
+    {
+      "id": "macro-indentation",
+      "category": "macro-jinja",
+      "query": "Why does my macro break when I indent the Jinja inside it?",
+      "top": [
+        "Klipper_GCode_Macro_AI_Summary::Jinja formatting (Klipper specifics)",
+        "FAQ::Why does Klipper report errors? I lost my print!",
+        "Klipper_GCode_Macro_AI_Summary::Jinja formatting (Klipper specifics)"
+      ]
+    },
+    {
+      "id": "macro-save-restore-state",
+      "category": "macro-jinja",
+      "query": "How do I make sure my macro doesn't mess up coordinate transforms or speed?",
+      "top": [
+        "FAQ::The \"make flash\" command doesn't work",
+        "FAQ::My TMC motor driver turns off in the middle of a print",
+        "TMC_Drivers::How do I tune spreadCycle/coolStep/etc. mode on my drivers?"
+      ]
+    },
+    {
+      "id": "macro-rawparams",
+      "category": "macro-jinja",
+      "query": "How do I forward all parameters of my macro to another command unchanged?",
+      "top": [
+        "TMC_Drivers::How do I tune spreadCycle/coolStep/etc. mode on my drivers?",
+        "FAQ::My TMC motor driver turns off in the middle of a print",
+        "Klipper_GCode_Macro_AI_Summary::Jinja formatting (Klipper specifics)"
+      ]
+    },
+    {
+      "id": "macro-printer-object",
+      "category": "macro-jinja",
+      "query": "How do I access live printer status from inside a macro?",
+      "top": [
+        "Klipper_GCode_Macro_AI_Summary::Jinja formatting (Klipper specifics)",
+        "FAQ::How do I calculate the rotation_distance config parameter?",
+        "TMC_Drivers::How do I tune spreadCycle/coolStep/etc. mode on my drivers?"
+      ]
+    },
+    {
+      "id": "macro-conditional-actions",
+      "category": "macro-jinja",
+      "query": "How do I conditionally run gcode in a macro depending on a Jinja if statement?",
+      "top": [
+        "Klipper_GCode_Macro_AI_Summary::Jinja formatting (Klipper specifics)",
+        "Klipper_GCode_Macro_AI_Summary::Jinja formatting (Klipper specifics)",
+        "Klipper_GCode_Macro_AI_Summary::Jinja formatting (Klipper specifics)"
+      ]
+    },
+    {
+      "id": "macro-jinja-variables",
+      "category": "macro-jinja",
+      "query": "How do Jinja variables work inside gcode macros?",
+      "top": [
+        "Klipper_GCode_Macro_AI_Summary::Jinja formatting (Klipper specifics)",
+        "Klipper_Docs_AI_Summary::Macros, templates, and delayed G-Code",
+        "Klipper_GCode_Macro_AI_Summary::Jinja formatting (Klipper specifics)"
+      ]
+    },
+    {
+      "id": "macro-delayed-run",
+      "category": "macro-jinja",
+      "query": "How do I run a macro automatically a few seconds after another one?",
+      "top": [
+        "FAQ::How do I calculate the rotation_distance config parameter?",
+        "Debugging::Testing with simulavr",
+        "FAQ::How do I cancel an M109/M190 \"wait for temperature\" request?"
+      ]
+    },
+    {
+      "id": "macro-lcd-menu",
+      "category": "macro-jinja",
+      "query": "How do I add my macro to the LCD menu?",
+      "top": [
+        "TMC_Drivers::How do I tune spreadCycle/coolStep/etc. mode on my drivers?",
+        "FAQ::My TMC motor driver turns off in the middle of a print",
+        "FAQ::My Raspberry Pi keeps rebooting during prints"
+      ]
+    },
+    {
+      "id": "macro-persist-variable",
+      "category": "macro-jinja",
+      "query": "How do I keep a variable's value after Klipper restarts?",
+      "top": [
+        "FAQ::How do I calculate the rotation_distance config parameter?",
+        "FAQ::How do I cancel an M109/M190 \"wait for temperature\" request?",
+        "TMC_Drivers::How do I tune spreadCycle/coolStep/etc. mode on my drivers?"
+      ]
+    },
+    {
+      "id": "macro-respond-message",
+      "category": "macro-jinja",
+      "query": "How do I print a message to the console from inside a macro?",
+      "top": [
+        "FAQ::How do I cancel an M109/M190 \"wait for temperature\" request?",
+        "FAQ::How do I calculate the rotation_distance config parameter?",
+        "FAQ::My TMC motor driver turns off in the middle of a print"
+      ]
+    },
+    {
+      "id": "macro-get-position",
+      "category": "macro-jinja",
+      "query": "How do I read the current toolhead position into a macro?",
+      "top": [
+        "Status_Reference::toolhead",
+        "FAQ::How do I cancel an M109/M190 \"wait for temperature\" request?",
+        "FAQ::How do I calculate the rotation_distance config parameter?"
+      ]
+    },
+    {
+      "id": "macro-temperature-wait",
+      "category": "macro-jinja",
+      "query": "How do I pause a macro until the extruder reaches a temperature?",
+      "top": [
+        "FAQ::How do I cancel an M109/M190 \"wait for temperature\" request?",
+        "mainsail-cfg::Reuse the PAUSE macro",
+        "tmc_autotune::How do I know tuning was applied?"
+      ]
+    },
+    {
+      "id": "macro-set-variable-runtime",
+      "category": "macro-jinja",
+      "query": "How do I change a macro's variable while it is running or from another macro?",
+      "top": [
+        "Command_Templates::The \"rawparams\" variable",
+        "mainsail-cfg::Reuse the PAUSE macro",
+        "Debugging::Testing with simulavr"
+      ]
+    },
+    {
+      "id": "macro-print-stats-status",
+      "category": "macro-jinja",
+      "query": "What fields can I read from print_stats in a template?",
+      "top": [
+        "G-Codes::[print_stats]",
+        "Code_Overview::Porting to a new micro-controller",
+        "TMC_Drivers::I keep getting \"Unable to read tmc uart 'stepper_x' register IFCNT\" errors?"
+      ]
+    },
+    {
+      "id": "macro-coords-in-template",
+      "category": "macro-jinja",
+      "query": "How do I reference toolhead coordinates inside a display template?",
+      "top": [
+        "FAQ::How do I calculate the rotation_distance config parameter?",
+        "Status_Reference::probe",
+        "TMC_Drivers::How do I tune spreadCycle/coolStep/etc. mode on my drivers?"
+      ]
+    }
+  ]
+}
