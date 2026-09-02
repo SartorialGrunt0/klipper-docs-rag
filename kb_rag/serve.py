@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -41,6 +42,38 @@ class QueryEmbedder(Protocol):
     def embed_query(self, text: str) -> "np.ndarray": ...
 
 VIRTUAL_MODEL = "klipper-expert"
+# --- topic gate -----------------------------------------------------------
+# Blocks doc injection for off-topic turns (chit-chat) so they don't burn
+# the context budget or drag the model into doc-talk.
+#
+# Signal = *centroid-whitened* top-1 cosine. nomic embeddings are
+# anisotropic: every vector sits in one narrow cone, so raw cosine floors
+# at ~0.5 even for "hello" (measured on the live index: chit-chat t1
+# 0.50-0.70, domain questions 0.63-0.86 — overlapping, undecidable).
+# Removing the corpus-mean direction separates them: measured chit-chat
+# tops out at 0.35 ("what's the weather like"), while gold-set queries
+# without any intent-word bypass floor at 0.49. Threshold 0.40 sits in
+# that gap; vague domain questions below it are protected by DOMAIN_HINTS.
+DEFAULT_GATE_THRESHOLD = 0.40
+# Words that make a query domain-relevant by construction even when the
+# embedding signal is weak (vague questions: "the fan won't turn off").
+# Only unambiguous Klipper-domain nouns go here; generic words dilute the
+# gate (an edit-verb regex on the client side handles edit flows).
+DOMAIN_HINTS = frozenset({
+    "klipper", "printer", "printer.cfg", "mcu", "gcode", "macro", "jinja",
+    "extruder", "stepper", "heater", "heater_fan", "part_fan", "fan",
+    "probe", "bltouch", "tmc2209", "tmc2240", "tmc", "driver", "drivers",
+    "firmware", "moonraker", "mainsail", "fluidd", "bed_mesh", "mesh",
+    "homing", "endstop", "retraction", "pressure_advance", "input_shaper",
+    "shaper", "z_tilt", "screws_tilt", "delta", "resonance", "ringing",
+    "ratros", "voron", "ebbccan", "katapult", "klippy", "gcodes",
+    "kinematics", "stealthburner", "hotkey", "spider",
+})
+# Stricter than retrieve._IDENT_RE: separators must sit *between* alphanums
+# (no trailing "vacation." false positives), digits must be inside a word.
+# heater_fan / tmc2209 / cycle_time / can0 match; prose does not.
+_IDENT_WORD_RE = re.compile(
+    r"[a-z0-9]+(?:[._+][a-z0-9]+)+|(?:\b|\A)[a-z]*\d[a-z0-9._+]*(?:\b|\Z)")
 SYSTEM_PREAMBLE = (
     "You are a Klipper 3D-printer firmware expert helping the user with "
     "printer.cfg, macros, and troubleshooting."
@@ -60,22 +93,74 @@ CONTEXT_TEMPLATE = (
 class RagService:
     def __init__(self, index: KbIndex, embed: QueryEmbedder,
                  chat_url: str, base_model: str, k: int = 3,
-                 max_context_chars: int = 4000) -> None:
+                 max_context_chars: int = 4000,
+                 gate_threshold: float | None = DEFAULT_GATE_THRESHOLD) -> None:
         self.index = index
         self.embed = embed
         self.chat_url = chat_url.rstrip("/")
         self.base_model = base_model
         self.k = k
         self.max_context_chars = max_context_chars
+        self.gate_threshold = gate_threshold or None
         self._lock = threading.Lock()  # index is read-only; embed is not reentrant-safe
+        self._wmat: np.ndarray | None = None  # centroid-whitened chunk vectors
 
-    def retrieve(self, query: str, k: int | None = None) -> list[dict]:
+    def _whitened_top1(self, qv: np.ndarray) -> float:
+        """Top-1 cosine after removing the corpus-mean direction.
+
+        Corrects nomic's anisotropy (raw cosines compress into 0.5-0.9
+        regardless of topic). Computed against a lazily built whitened
+        copy of the chunk matrix; falls back to raw cosine if the
+        correction degenerates.
+        """
+        V = self.index.vectors
+        mu = V.mean(axis=0)
+        n = float(np.linalg.norm(mu))
+        if not n:
+            return float((V @ qv).max()) if len(V) else 0.0
+        mu = mu / n
+        if self._wmat is None:
+            w = V - np.outer(V @ mu, mu)
+            norms = np.linalg.norm(w, axis=1, keepdims=True)
+            self._wmat = w / np.where(norms == 0, 1, norms)
+        qw = qv - mu * float(qv @ mu)
+        qn = float(np.linalg.norm(qw))
+        if not qn:
+            return 0.0
+        return float((self._wmat @ (qw / qn)).max())
+
+    def retrieve_full(self, query: str, k: int | None = None) -> dict:
+        """Hybrid retrieval with a topic-confidence gate.
+
+        Gate signal = centroid-whitened best dense cosine (RRF scores are
+        rank-fusion values, not comparable to a threshold). A query passes
+        when its whitened top-1 clears the threshold, it names an
+        identifier (``heater_fan``, ``tmc2209``), or it contains a known
+        domain word (``fan``, ``mesh``...): those are doc intent by
+        construction, and the embedding signal undershoots on short or
+        vague queries. Fails closed: gate ON by default.
+        """
         with self._lock:
             qv = self.embed.embed_query(query)
+        top1 = self._whitened_top1(qv)
+        ql = query.lower()
+        tokens = set(re.findall(r"[a-z0-9._+]+", ql))
+        has_intent = bool(_IDENT_WORD_RE.findall(ql)) or bool(
+            DOMAIN_HINTS.intersection(tokens))
+        if self.gate_threshold is not None and not has_intent \
+                and top1 < self.gate_threshold:
+            return {"chunks": [], "gate_passed": False,
+                    "top1_cosine": top1, "ident": False}
         hits = hybrid_search(self.index, qvec=qv, text=query,
                              k=k or self.k)
-        return [{"doc": h.chunk.doc, "section": h.chunk.section,
-                 "text": h.chunk.text, "score": h.score} for h in hits]
+        return {"chunks": [{"doc": h.chunk.doc, "section": h.chunk.section,
+                            "text": h.chunk.text, "score": h.score}
+                           for h in hits],
+                "gate_passed": True, "top1_cosine": top1,
+                "ident": has_intent}
+
+    def retrieve(self, query: str, k: int | None = None) -> list[dict]:
+        return self.retrieve_full(query, k)["chunks"]
 
     def augment(self, messages: list[dict]) -> tuple[list[dict], list[dict]]:
         """Return (forwarded_messages, retrieved_chunks)."""
@@ -119,7 +204,7 @@ class RagService:
         r.raise_for_status()
         data = r.json()
         data["model"] = VIRTUAL_MODEL
-        data["rag"] = {"chunks": [
+        data["rag"] = {"gate_passed": bool(chunks), "chunks": [
             {"doc": c["doc"], "section": c["section"], "score": c["score"]}
             for c in chunks]}
         return data
@@ -171,9 +256,11 @@ class Handler(BaseHTTPRequestHandler):
                 else:
                     self._json(200, self.service.chat(payload))
             elif self.path == "/retrieve":
-                res = self.service.retrieve(payload.get("query", ""),
-                                            payload.get("k"))
-                self._json(200, {"results": res})
+                res = self.service.retrieve_full(
+                    payload.get("query", ""), payload.get("k"))
+                self._json(200, {"results": res["chunks"],
+                                 "gate_passed": res["gate_passed"],
+                                 "top1_cosine": res["top1_cosine"]})
             else:
                 self._json(404, {"error": "not found"})
         except httpx.HTTPStatusError as e:
@@ -195,14 +282,19 @@ def main() -> int:
     ap.add_argument("--port", type=int, default=8090)
     ap.add_argument("--host", default="0.0.0.0")
     ap.add_argument("-k", type=int, default=3)
+    ap.add_argument("--gate-threshold", type=float,
+                    default=DEFAULT_GATE_THRESHOLD,
+                    help="min top-1 dense cosine to inject docs; 0 disables")
     args = ap.parse_args()
 
     index = KbIndex.load(Path(args.state))
     embed = EmbedClient(base_url=args.embed_url or index.meta["embed_url"])
     Handler.service = RagService(index, embed, args.chat_url,
-                                 args.base_model, k=args.k)
+                                 args.base_model, k=args.k,
+                                 gate_threshold=args.gate_threshold)
     print(f"klipper-expert on :{args.port} -> {args.chat_url} "
-          f"({args.base_model}), index={index.count()} chunks", flush=True)
+          f"({args.base_model}), index={index.count()} chunks, "
+          f"gate={args.gate_threshold or 'OFF'}", flush=True)
     ThreadingHTTPServer((args.host, args.port), Handler).serve_forever()
     return 0
 
