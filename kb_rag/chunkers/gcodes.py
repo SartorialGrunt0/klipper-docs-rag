@@ -55,7 +55,7 @@ def chunk_gcodes_file(
         path = [t for _, t in stack]
         if level >= 4:
             # a command: breadcrumb includes the parent [section]
-            crumb_root = "KWC Docs" if source == "kwc" else "Klipper Docs"
+            crumb_root = "Extra Docs" if source == "extra" else "Klipper Docs"
             crumb = " > ".join([crumb_root, display, *path])
             prefix = f"[{crumb}]\n\n"
             eff_max = max_tokens

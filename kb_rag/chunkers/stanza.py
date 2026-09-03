@@ -1,8 +1,7 @@
 """Stanza chunker: one chunk per ``### [section]`` block.
 
-Targets Config_Reference.md (and KWC summaries shaped like it): the doc's
-value unit is a config stanza, exactly the insight KWC's DocIndex already
-encodes with CONFIG_SECTION_HEADER_RE. Non-stanza content (doc intro,
+Targets Config_Reference.md (and summary docs shaped like it): the
+doc's value unit is a config stanza, so section headers drive the split. Non-stanza content (doc intro,
 format discussion, ``##``-level sections) is preserved as its own chunks
 anchored to the nearest heading so nothing silently drops.
 
@@ -20,7 +19,7 @@ DEFAULT_MAX_TOKENS = 500
 
 
 def _breadcrumb(display: str, section: str, source: str) -> str:
-    root = "KWC Docs" if source == "kwc" else "Klipper Docs"
+    root = "Extra Docs" if source == "extra" else "Klipper Docs"
     return f"{root} > {display} > {section}"
 
 

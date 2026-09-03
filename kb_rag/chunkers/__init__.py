@@ -1,7 +1,7 @@
 """Chunkers: structure-aware splitting of Klipper docs.
 
 Dispatch rules (docs/RAG-RESEARCH.md §4.1):
-- Config_Reference* / KWC summaries shaped like it  -> stanza chunker
+- Config_Reference* / summaries shaped like it      -> stanza chunker
 - G-Codes                                          -> command chunker
 - everything else                                  -> headings chunker
 """

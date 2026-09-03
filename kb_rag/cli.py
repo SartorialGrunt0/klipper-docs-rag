@@ -1,9 +1,9 @@
 """kb-rag CLI — phase 0: corpus chunking stats + dump.
 
 Usage:
-    kb-rag stats <docs-dir> [--kwc-dir DIR] [--max-tokens N] [--json]
+    kb-rag stats <docs-dir> [--extra-dir DIR] [--max-tokens N] [--json]
     kb-rag dump  <docs-dir> (--section NAME | --doc NAME) [--json]
-    kb-rag build <docs-dir> [--kwc-dir DIR] [--state PATH] [--embed-url URL]
+    kb-rag build <docs-dir> [--extra-dir DIR] [--state PATH] [--embed-url URL]
     kb-rag query <state-path> "text query" [-k N] [--json]
 """
 from __future__ import annotations
@@ -27,12 +27,12 @@ def _iter_docs(docs_dir: Path, source: str):
         yield path.stem, path.read_text(encoding="utf-8", errors="replace"), source
 
 
-def _collect(docs_dir: Path, kwc_dir: Path | None, max_tokens: int):
+def _collect(docs_dir: Path, extra_dir: Path | None, max_tokens: int):
     chunks = []
     for stem, text, source in _iter_docs(docs_dir, "klipper"):
         chunks.extend(chunk_document(text, stem, source=source, max_tokens=max_tokens))
-    if kwc_dir and kwc_dir.is_dir():
-        for stem, text, source in _iter_docs(kwc_dir, "kwc"):
+    if extra_dir and extra_dir.is_dir():
+        for stem, text, source in _iter_docs(extra_dir, "extra"):
             chunks.extend(chunk_document(text, stem, source=source, max_tokens=max_tokens))
     return chunks
 
@@ -42,7 +42,7 @@ def cmd_stats(args: argparse.Namespace) -> int:
     if not docs_dir.is_dir():
         print(f"error: no such directory: {docs_dir}", file=sys.stderr)
         return 2
-    chunks = _collect(docs_dir, Path(args.kwc_dir).expanduser() if args.kwc_dir else None,
+    chunks = _collect(docs_dir, Path(args.extra_dir).expanduser() if args.extra_dir else None,
                       args.max_tokens)
     n = len(chunks)
     if n == 0:
@@ -94,7 +94,7 @@ def cmd_dump(args: argparse.Namespace) -> int:
     if not docs_dir.is_dir():
         print(f"error: no such directory: {docs_dir}", file=sys.stderr)
         return 2
-    chunks = _collect(docs_dir, Path(args.kwc_dir).expanduser() if args.kwc_dir else None,
+    chunks = _collect(docs_dir, Path(args.extra_dir).expanduser() if args.extra_dir else None,
                       args.max_tokens)
     if args.section:
         needle = args.section.lower().removeprefix("[").removesuffix("]")
@@ -123,7 +123,7 @@ def cmd_build(args: argparse.Namespace) -> int:
     if not docs_dir.is_dir():
         print(f"error: no such directory: {docs_dir}", file=sys.stderr)
         return 2
-    chunks = _collect(docs_dir, Path(args.kwc_dir).expanduser() if args.kwc_dir else None,
+    chunks = _collect(docs_dir, Path(args.extra_dir).expanduser() if args.extra_dir else None,
                       args.max_tokens)
     if not chunks:
         print("error: no markdown docs found", file=sys.stderr)
@@ -146,7 +146,7 @@ def cmd_build(args: argparse.Namespace) -> int:
     idx = KbIndex(Path(args.state), dim=dim)
     idx.save(chunks, vectors, meta={
         "docs_dir": str(docs_dir),
-        "kwc_dir": str(args.kwc_dir) if args.kwc_dir else None,
+        "extra_dir": str(args.extra_dir) if args.extra_dir else None,
         "embed_url": args.embed_url,
         "embed_model": client.model,
         "built_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
@@ -210,14 +210,14 @@ def main(argv: list[str] | None = None) -> int:
 
     ps = sub.add_parser("stats", help="chunk-count and size statistics for a docs dir")
     ps.add_argument("docs_dir")
-    ps.add_argument("--kwc-dir", help="extra dir of KWC-authored docs")
+    ps.add_argument("--extra-dir", help="optional dir of additional authored docs (source tag 'extra')")
     ps.add_argument("--max-tokens", type=int, default=500)
     ps.add_argument("--json", action="store_true")
     ps.set_defaults(fn=cmd_stats)
 
     pd = sub.add_parser("dump", help="print chunks matching a section or doc")
     pd.add_argument("docs_dir")
-    pd.add_argument("--kwc-dir")
+    pd.add_argument("--extra-dir")
     pd.add_argument("--max-tokens", type=int, default=500)
     pd.add_argument("--section", help="substring of chunk section, e.g. heater_fan")
     pd.add_argument("--doc", help="exact doc stem, e.g. Bed_Mesh")
@@ -226,7 +226,7 @@ def main(argv: list[str] | None = None) -> int:
 
     pb = sub.add_parser("build", help="chunk + embed a docs dir into the index")
     pb.add_argument("docs_dir")
-    pb.add_argument("--kwc-dir")
+    pb.add_argument("--extra-dir")
     pb.add_argument("--max-tokens", type=int, default=500)
     pb.add_argument("--state", default=str(DEFAULT_STATE))
     pb.add_argument("--embed-url", default=DEFAULT_EMBED_URL)
@@ -240,7 +240,7 @@ def main(argv: list[str] | None = None) -> int:
     pq.add_argument("state")
     pq.add_argument("query")
     pq.add_argument("-k", type=int, default=3)
-    pq.add_argument("--source", help="comma list: klipper,kwc")
+    pq.add_argument("--source", help="comma list: klipper,extra")
     pq.add_argument("--embed-url", default=None)
     pq.add_argument("--embed-model", default=None,
                     help="override the model recorded at build time")

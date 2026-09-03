@@ -81,7 +81,7 @@ def test_bm25_empty_query(seeded):
 
 
 def test_bm25_source_filter(seeded):
-    res = seeded.search_text("fan", k=4, sources={"kwc"})
+    res = seeded.search_text("fan", k=4, sources={"extra"})
     assert res == []
 
 

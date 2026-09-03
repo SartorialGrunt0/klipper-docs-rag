@@ -27,7 +27,7 @@ class Chunk:
     id: str                 # stable: f"{source}/{doc}::{section_or_heading}[#part]"
     doc: str                # filename stem, e.g. "Config_Reference"
     text: str               # breadcrumb prefix + body
-    source: str = "klipper"  # klipper | kwc | config
+    source: str = "klipper"  # klipper | extra | config
     section: str | None = None   # e.g. "[heater_fan]" or "BED_MESH_CALIBRATE"
     breadcrumb: str = ""         # e.g. "Klipper Docs > Config Reference > [heater_fan]"
     part: int = 0                # sub-split index of the same logical section

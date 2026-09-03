@@ -1,0 +1,24 @@
+# bge-reranker-v2-m3 via llama.cpp — optional cross-encoder rescoring for
+# klipper-docs-rag. Generated from this template by install.sh --with-reranker,
+# or filled in by hand (replace __LLAMA_SERVER__ and __GGUF__) and installed:
+#   cp <file> ~/.config/systemd/user/klipper-rerank.service
+#   systemctl --user daemon-reload && systemctl --user enable --now klipper-rerank
+#
+# Prerequisites: a llama.cpp build whose llama-server supports --rerank, and
+# the bge-reranker-v2-m3 GGUF, e.g.:
+#   curl -fL -o ~/models/bge-reranker-v2-m3-q8_0.gguf \
+#     https://huggingface.co/lj027/bge-reranker-v2-m3-Q8_0-GGUF/resolve/main/bge-reranker-v2-m3-q8_0.gguf
+[Unit]
+Description=klipper-docs-rag reranker (bge-reranker-v2-m3, llama.cpp --rerank)
+After=network-online.target
+
+[Service]
+ExecStart=__LLAMA_SERVER__ \
+  -m __GGUF__ \
+  --embedding --pooling rank --rerank \
+  --host 127.0.0.1 --port 8101 --ctx-size 4096
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

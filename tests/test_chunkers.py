@@ -244,9 +244,9 @@ def test_chunk_document_dispatch():
         assert c.tokens > 0
 
 
-def test_chunk_kwc_doc_source_tag():
-    chunks = chunk_document(CONFIG_REF_SAMPLE, "Klipper_Docs_AI_Summary", source="kwc")
-    assert all(c.source == "kwc" for c in chunks)
-    assert all(c.id.startswith("kwc/") for c in chunks)
-    assert "[Klipper Docs" not in chunks[0].breadcrumb  # KWC crumb, not official
-    assert "KWC Docs" in chunks[0].breadcrumb
+def test_chunk_extra_doc_source_tag():
+    chunks = chunk_document(CONFIG_REF_SAMPLE, "My_Summary", source="extra")
+    assert all(c.source == "extra" for c in chunks)
+    assert all(c.id.startswith("extra/") for c in chunks)
+    assert "[Klipper Docs" not in chunks[0].breadcrumb  # extra-docs crumb, not official
+    assert "Extra Docs" in chunks[0].breadcrumb

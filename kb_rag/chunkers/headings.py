@@ -17,7 +17,7 @@ DEFAULT_MAX_TOKENS = 500
 
 
 def _breadcrumb(display: str, path: list[str], source: str) -> str:
-    root = "KWC Docs" if source == "kwc" else "Klipper Docs"
+    root = "Extra Docs" if source == "extra" else "Klipper Docs"
     return " > ".join([root, display, *path])
 
 

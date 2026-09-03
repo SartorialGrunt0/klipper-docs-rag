@@ -76,9 +76,9 @@ def test_search_k_clamps(tmp_index):
 
 def test_source_filter(tmp_index):
     ck = [_chunk(0, doc="Bed_Mesh", section="Fade")]
-    cw = [Chunk(id="kwc/Summary::x", doc="Summary", section="x",
-                breadcrumb="KWC Docs > Summary > x", text="[c]\n\nkwc body",
-                source="kwc")]
+    cw = [Chunk(id="extra/Summary::x", doc="Summary", section="x",
+                breadcrumb="Extra Docs > Summary > x", text="[c]\n\nextra body",
+                source="extra")]
     chunks = ck + cw
     fake = FakeEmbedder()
     tmp_index.save(chunks, np.stack(fake.embed_documents([c.text for c in chunks])), meta={})
