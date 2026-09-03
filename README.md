@@ -118,7 +118,11 @@ The installer prompts for:
    against `/v1/embeddings` before anything is written;
 2. **Chat provider base URL** and **chat model name** — the model the
    proxy answers with;
-3. **Proxy port** (default `8090`).
+3. **Proxy port** (default `8090`);
+4. **Optional path to a Klipper `docs/` dir** — press Enter to accept the
+   default: an existing checkout at `~/klipper/docs` is auto-detected,
+   otherwise Klipper is shallow-cloned into `~/.klipper-rag/klipper`.
+   (Also settable non-interactively with `--docs-dir DIR`.)
 
 It then creates a private virtualenv at `~/.klipper-rag/venv`, fetches the
 Klipper docs (existing checkout, or a shallow clone), builds the index to

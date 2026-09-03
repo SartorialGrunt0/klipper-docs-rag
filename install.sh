@@ -12,11 +12,14 @@
 # OpenAI-compatible client at http://<host>:<port>/v1 and select it.
 #
 # Usage:
-#   ./install.sh [--prefix DIR] [--with-reranker] [--yes]
+#   ./install.sh [--prefix DIR] [--docs-dir DIR] [--with-reranker] [--yes]
 #
 # Flags:
 #   --prefix DIR       install root (default: ~/.klipper-rag)
-#   --with-reranker    also set up the optional bge-reranker-v2-m3 service
+#   --docs-dir DIR     optional path to a Klipper docs/ dir; when omitted,
+#                      an existing checkout is auto-detected, otherwise
+#                      Klipper is shallow-cloned under the install prefix
+#   --with-reranker    also set up the optional bge-reranker service
 #   --yes              accept defaults for every prompt (needs the required
 #                      values to be sensible; prompts still print them)
 #
@@ -31,6 +34,7 @@ usage() { grep -E '^#( |$)' "$0" | sed 's/^# \{0,1\}//'; exit 0; }
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --prefix) PREFIX="$2"; shift 2 ;;
+    --docs-dir) DOCS_DIR="$2"; export DOCS_DIR; shift 2 ;;
     --with-reranker) WITH_RERANKER=1; shift ;;
     --yes) ASSUME_YES=1; shift ;;
     -h|--help) usage ;;
@@ -164,21 +168,25 @@ prompt PORT "8090" "Port to serve the proxy on:"
 # 3. Corpus
 # ---------------------------------------------------------------------------
 say "Klipper docs corpus"
+# Optional: if the user defines no path (prompt or --docs-dir / DOCS_DIR env),
+# fall back to the default path: an existing checkout is auto-detected,
+# otherwise Klipper is shallow-cloned under the install prefix.
 DEFAULT_DOCS=""
 for d in "$HOME/klipper/docs" "$HOME/klipper/klipper/docs"; do
   [[ -f "$d/Config_Reference.md" ]] && DEFAULT_DOCS="$d" && break
 done
-prompt DOCS_DIR "${DEFAULT_DOCS:-}" \
-  "Path to a Klipper checkout's docs/ dir (empty = shallow-clone Klipper into ${PREFIX}/klipper):"
-if [[ -z "$DOCS_DIR" ]]; then
-  DOCS_DIR="${PREFIX}/klipper/docs"
-  if [[ ! -f "$DOCS_DIR/Config_Reference.md" ]]; then
-    say "Shallow-cloning Klipper into ${PREFIX}/klipper ..."
-    mkdir -p "$PREFIX"
-    git clone --depth 1 https://github.com/Klipper3d/klipper "${PREFIX}/klipper"
-  fi
+[[ -n "$DEFAULT_DOCS" ]] || DEFAULT_DOCS="${PREFIX}/klipper/docs"
+prompt DOCS_DIR "$DEFAULT_DOCS" \
+  "Optional path to a Klipper docs/ dir (Enter = default$([[ "$DEFAULT_DOCS" == "${PREFIX}/klipper/docs" ]] && printf ', clones Klipper there)' || printf ', uses it as-is)')"
+if [[ "$DOCS_DIR" != "$DEFAULT_DOCS" ]]; then
+  [[ -f "$DOCS_DIR/Config_Reference.md" ]] \
+    || die "no Klipper docs at $DOCS_DIR (Config_Reference.md not found) — point at a Klipper checkout's docs/ dir, or press Enter at the prompt for the default"
+elif [[ ! -f "$DOCS_DIR/Config_Reference.md" ]]; then
+  say "No Klipper docs at ${DOCS_DIR} — shallow-cloning Klipper into ${DOCS_DIR%/docs} ..."
+  mkdir -p "${DOCS_DIR%/docs}"
+  git clone --depth 1 https://github.com/Klipper3d/klipper "${DOCS_DIR%/docs}"
+  [[ -f "$DOCS_DIR/Config_Reference.md" ]] || die "clone completed but no Config_Reference.md at $DOCS_DIR"
 fi
-[[ -f "$DOCS_DIR/Config_Reference.md" ]] || die "no Klipper docs at $DOCS_DIR (Config_Reference.md not found)"
 
 # ---------------------------------------------------------------------------
 # 4. venv + build
