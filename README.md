@@ -12,6 +12,9 @@ sections, cited and injected, with no tool calling required.
 
 - **Design & research:** [`docs/RAG-RESEARCH.md`](docs/RAG-RESEARCH.md)
 - **Install:** [`install.sh`](install.sh) · **Remove:** [`uninstall.sh`](uninstall.sh)
+- **Version-aware:** the index records which Klipper version it was built
+  from, and stale answers carry a docs-update footnote (see
+  [Version alignment](#version-alignment))
 - **Dependencies:** `httpx` + `numpy` + Python stdlib. No frameworks, no
   vector database, no telemetry.
 
@@ -26,6 +29,10 @@ guessing from training data, the service:
 3. **injects** the retrieved chunks as a cited `CONTEXT` block, and
 4. **forwards** to your chat model, returning the answer plus a
    `rag.chunks` provenance field.
+
+If the indexed docs have fallen behind upstream Klipper, grounded answers
+also carry a one-line footnote telling you to refresh (see
+[Version alignment](#version-alignment)).
 
 ## Design
 
@@ -209,9 +216,9 @@ don't mix — changing it rebuilds the whole index.
 
 Stops and disables the `klipper-rag-proxy` (and `klipper-rerank`, if
 installed) user services, removes their unit files, and — after
-confirmation — deletes `~/.klipper-rag` (venv, index, cloned docs). It
-touches nothing else: your embedding/chat servers and any Klipper checkout
-you supplied predate the install.
+confirmation — deletes `~/.klipper-rag` (venv, index, upstream-check
+cache, cloned docs). It touches nothing else: your embedding/chat servers
+and any Klipper checkout you supplied predate the install.
 
 ## Development
 
