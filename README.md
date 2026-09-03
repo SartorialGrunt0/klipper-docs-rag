@@ -120,17 +120,39 @@ The installer prompts for:
    proxy answers with;
 3. **Proxy port** (default `8090`);
 4. **Optional path to a Klipper `docs/` dir** — press Enter to accept the
-   default: an existing checkout at `~/klipper/docs` is auto-detected,
-   otherwise Klipper is shallow-cloned into `~/.klipper-rag/klipper`.
-   (Also settable non-interactively with `--docs-dir DIR`.)
+   default, which shallow-clones the latest mainline Klipper under
+   `~/.klipper-rag/klipper` (and `git pull`s it on re-runs). Supply your
+   own checkout path to build from a pinned version or a fork
+   (`--klipper-ref v0.12.0` pins the auto-clone instead).
 
-It then creates a private virtualenv at `~/.klipper-rag/venv`, fetches the
-Klipper docs (existing checkout, or a shallow clone), builds the index to
-`~/.klipper-rag/kb.sqlite`, writes `~/.klipper-rag/env`, and installs a
-systemd *user* service (`klipper-rag-proxy`) that starts the proxy now and
-on login. Where systemd isn't available, it prints an equivalent manual run
-command. Add `--with-reranker` to also set up the optional reranker service,
-`--prefix DIR` to relocate, and `--yes` to accept all defaults.
+It then creates a private virtualenv at `~/.klipper-rag/venv`, builds the
+index to `~/.klipper-rag/kb.sqlite`, writes `~/.klipper-rag/env`, and
+installs a systemd *user* service (`klipper-rag-proxy`) that starts the
+proxy now and on login. Where systemd isn't available, it prints an
+equivalent manual run command. Add `--with-reranker` to also set up the
+optional reranker service, `--prefix DIR` to relocate, and `--yes` to
+accept all defaults.
+
+### Version alignment
+
+The index records exactly which Klipper version its docs came from
+(`git describe` of the source checkout), visible in `GET /health`. On the
+default path the corpus tracks mainline: **re-run `install.sh` whenever
+you want the RAG to refresh** — it pulls newer docs, rebuilds, and
+restarts the proxy. If you run the RAG alongside an older Klipper or a
+fork, point the installer at that checkout and the index matches it
+instead.
+
+While serving, the proxy checks upstream Klipper master (GitHub API,
+cached 6 h, fully fail-quiet offline) and appends a footnote to
+doc-grounded answers when the index has demonstrably fallen behind:
+
+> *Klipper docs note: the latest upstream docs are at **v0.14.0**, while
+> this RAG index was built at **v0.13.0-734-gfe4eb865**. Re-run
+> `install.sh` to refresh the RAG.*
+
+`GET /health` reports `docs_version` and `stale`. Turn the check off with
+`kb_rag.serve --no-check-upstream` for air-gapped boxes.
 
 ### Manual
 
@@ -172,10 +194,12 @@ reasoning channel — clients should request `max_tokens ≥ ~800`.
 
 ### Updating the corpus
 
-Re-run the build over a refreshed checkout (`git pull` the Klipper repo,
-then `kb-rag build ...` / re-run `install.sh`). Keep `--embed-model`
-constant: vectors from different embedding models don't mix — changing it
-rebuilds the whole index.
+Re-run `install.sh` (pulls the docs checkout, rebuilds the index, restarts
+the proxy), or manually: `git pull` the docs checkout, `kb-rag build ...`,
+`systemctl --user restart klipper-rag-proxy` — the proxy loads the index
+once at startup, so a rebuild without a restart is invisible to answers.
+Keep `--embed-model` constant: vectors from different embedding models
+don't mix — changing it rebuilds the whole index.
 
 ## Removal
 

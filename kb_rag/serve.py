@@ -98,7 +98,8 @@ class RagService:
                  chat_url: str, base_model: str, k: int = 3,
                  max_context_chars: int = 4000,
                  gate_threshold: float | None = DEFAULT_GATE_THRESHOLD,
-                 rerank_client=None) -> None:
+                 rerank_client=None,
+                 staleness=None) -> None:
         self.index = index
         self.embed = embed
         self.chat_url = chat_url.rstrip("/")
@@ -107,6 +108,7 @@ class RagService:
         self.max_context_chars = max_context_chars
         self.gate_threshold = gate_threshold or None
         self.rerank = rerank_client  # None or RerankClient
+        self.staleness = staleness  # None or UpstreamChecker
         self._lock = threading.Lock()  # index is read-only; embed is not reentrant-safe
         self._wmat: np.ndarray | None = None  # centroid-whitened chunk vectors
 
@@ -220,6 +222,16 @@ class RagService:
         data["rag"] = {"gate_passed": bool(chunks), "chunks": [
             {"doc": c["doc"], "section": c["section"], "score": c["score"]}
             for c in chunks]}
+        if chunks and self.staleness is not None:
+            # docs-grounded answer + demonstrably-stale corpus => footnote
+            note = self.staleness.footnote()
+            if note:
+                choice = (data.get("choices") or [{}])[0]
+                msg = choice.get("message") or {}
+                if isinstance(msg.get("content"), str) and msg["content"]:
+                    choice.setdefault("message", msg)["content"] = \
+                        msg["content"] + note
+                    data["rag"]["stale"] = True
         return data
 
 
@@ -236,7 +248,11 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_GET(self):  # noqa: N802
         if self.path == "/health":
-            self._json(200, {"ok": True, "chunks": self.service.index.count()})
+            body = {"ok": True, "chunks": self.service.index.count(),
+                    "docs_version": self.service.index.meta.get("docs_version")}
+            if self.service.staleness is not None:
+                body["stale"] = bool(self.service.staleness.footnote())
+            self._json(200, body)
         elif self.path.startswith("/v1/models"):
             try:
                 r = httpx.get(f"{self.service.chat_url}/models", timeout=10.0)
@@ -306,6 +322,13 @@ def main() -> int:
     ap.add_argument("--rerank-url", default=None,
                     help="llama.cpp --rerank endpoint (e.g. "
                          "http://127.0.0.1:8101/v1/rerank); unset disables")
+    ap.add_argument("--check-upstream", dest="check_upstream",
+                    action="store_true", default=True,
+                    help="cached staleness check vs upstream Klipper; "
+                         "stale RAG appends a docs-update footnote (default)")
+    ap.add_argument("--no-check-upstream", dest="check_upstream",
+                    action="store_false",
+                    help="never contact upstream; no staleness footnote")
     args = ap.parse_args()
 
     index = KbIndex.load(Path(args.state))
@@ -317,10 +340,17 @@ def main() -> int:
     if args.rerank_url:
         from kb_rag.rerank import RerankClient
         reranker = RerankClient(args.rerank_url)
+    staleness = None
+    if args.check_upstream:
+        from kb_rag.version import UpstreamChecker
+        staleness = UpstreamChecker(
+            index.meta.get("docs_version"),
+            cache_path=Path(args.state).parent / "upstream.json")
     Handler.service = RagService(index, embed, args.chat_url,
                                  args.base_model, k=args.k,
                                  gate_threshold=args.gate_threshold,
-                                 rerank_client=reranker)
+                                 rerank_client=reranker,
+                                 staleness=staleness)
     print(f"klipper-expert on :{args.port} -> {args.chat_url} "
           f"({args.base_model}), index={index.count()} chunks, "
           f"gate={args.gate_threshold or 'OFF'}, "

@@ -19,6 +19,9 @@
 #   --docs-dir DIR     optional path to a Klipper docs/ dir; when omitted,
 #                      an existing checkout is auto-detected, otherwise
 #                      Klipper is shallow-cloned under the install prefix
+#   --klipper-ref REF  git ref (tag/branch) to clone for the docs corpus
+#                      (default: latest mainline master; ignored with
+#                      --docs-dir)
 #   --with-reranker    also set up the optional bge-reranker service
 #   --yes              accept defaults for every prompt (needs the required
 #                      values to be sensible; prompts still print them)
@@ -26,6 +29,7 @@
 set -euo pipefail
 
 PREFIX="${HOME}/.klipper-rag"
+KLIPPER_REF="master"
 WITH_RERANKER=0
 ASSUME_YES=0
 
@@ -35,6 +39,7 @@ while [[ $# -gt 0 ]]; do
   case "$1" in
     --prefix) PREFIX="$2"; shift 2 ;;
     --docs-dir) DOCS_DIR="$2"; export DOCS_DIR; shift 2 ;;
+    --klipper-ref) KLIPPER_REF="$2"; shift 2 ;;
     --with-reranker) WITH_RERANKER=1; shift ;;
     --yes) ASSUME_YES=1; shift ;;
     -h|--help) usage ;;
@@ -168,23 +173,26 @@ prompt PORT "8090" "Port to serve the proxy on:"
 # 3. Corpus
 # ---------------------------------------------------------------------------
 say "Klipper docs corpus"
-# Optional: if the user defines no path (prompt or --docs-dir / DOCS_DIR env),
-# fall back to the default path: an existing checkout is auto-detected,
-# otherwise Klipper is shallow-cloned under the install prefix.
-DEFAULT_DOCS=""
-for d in "$HOME/klipper/docs" "$HOME/klipper/klipper/docs"; do
-  [[ -f "$d/Config_Reference.md" ]] && DEFAULT_DOCS="$d" && break
-done
-[[ -n "$DEFAULT_DOCS" ]] || DEFAULT_DOCS="${PREFIX}/klipper/docs"
+# The normal path: build from the latest mainline Klipper docs cloned under
+# the install prefix (re-run install.sh to pull newer docs). The RAG tracks
+# mainline; the proxy footnotes answers when the index drifts behind.
+# Optional: --docs-dir / DOCS_DIR points at YOUR OWN checkout (a pinned
+# version or a fork) instead — the version is recorded either way.
+DEFAULT_DOCS="${PREFIX}/klipper/docs"
 prompt DOCS_DIR "$DEFAULT_DOCS" \
-  "Optional path to a Klipper docs/ dir (Enter = default$([[ "$DEFAULT_DOCS" == "${PREFIX}/klipper/docs" ]] && printf ', clones Klipper there)' || printf ', uses it as-is)')"
+  "Optional path to a Klipper docs/ dir (Enter = clone/update mainline at the default)"
 if [[ "$DOCS_DIR" != "$DEFAULT_DOCS" ]]; then
   [[ -f "$DOCS_DIR/Config_Reference.md" ]] \
     || die "no Klipper docs at $DOCS_DIR (Config_Reference.md not found) — point at a Klipper checkout's docs/ dir, or press Enter at the prompt for the default"
-elif [[ ! -f "$DOCS_DIR/Config_Reference.md" ]]; then
-  say "No Klipper docs at ${DOCS_DIR} — shallow-cloning Klipper into ${DOCS_DIR%/docs} ..."
+elif [[ -f "$DOCS_DIR/Config_Reference.md" ]]; then
+  say "Refreshing existing docs checkout (${KLIPPER_REF}) ..."
+  git -C "${DOCS_DIR%/docs}" pull --ff-only --depth 1 origin "$KLIPPER_REF" \
+    || warn "git pull failed — building from the existing checkout as-is"
+else
+  say "Shallow-cloning Klipper '${KLIPPER_REF}' into ${DOCS_DIR%/docs} ..."
   mkdir -p "${DOCS_DIR%/docs}"
-  git clone --depth 1 https://github.com/Klipper3d/klipper "${DOCS_DIR%/docs}"
+  git clone --depth 1 --branch "$KLIPPER_REF" \
+    https://github.com/Klipper3d/klipper "${DOCS_DIR%/docs}"
   [[ -f "$DOCS_DIR/Config_Reference.md" ]] || die "clone completed but no Config_Reference.md at $DOCS_DIR"
 fi
 
@@ -282,12 +290,19 @@ else
 fi
 
 say "Done."
+DOC_VER=$("$VENV/bin/python" -c "
+from kb_rag.index import KbIndex
+from pathlib import Path
+v = KbIndex.load(Path('$STATE_DB')).meta.get('docs_version') or {}
+print(v.get('describe', 'unknown'))" 2>/dev/null || echo unknown)
 echo
 echo "  Proxy base URL : http://127.0.0.1:${PORT}/v1"
 echo "  Virtual model  : klipper-expert"
-echo "  Index          : $STATE_DB"
+echo "  Index          : $STATE_DB  (Klipper docs @ ${DOC_VER})"
 echo "  Settings file  : $ENV_FILE"
 echo
+echo "  The proxy checks upstream Klipper (cached, 6h) and footnotes answers"
+echo "  when these docs fall behind. Disable with --no-check-upstream."
 echo "  Try it:"
 echo "    curl -s http://127.0.0.1:${PORT}/health"
 echo "    curl -s http://127.0.0.1:${PORT}/v1/chat/completions -H 'Content-Type: application/json' -d '{\"model\":\"klipper-expert\",\"messages\":[{\"role\":\"user\",\"content\":\"What parameters does [heater_fan] take?\"}]}'"

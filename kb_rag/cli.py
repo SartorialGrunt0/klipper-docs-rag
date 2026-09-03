@@ -16,6 +16,7 @@ import time
 from pathlib import Path
 
 from kb_rag.chunkers import chunk_document
+from kb_rag.version import docs_version
 
 DEFAULT_STATE = Path(os.environ.get("KB_STATE", str(Path.home() / "klipper-rag-state" / "kb.sqlite")))
 DEFAULT_EMBED_URL = os.environ.get("KB_EMBED_URL", "http://127.0.0.1:8080")
@@ -149,6 +150,7 @@ def cmd_build(args: argparse.Namespace) -> int:
         "extra_dir": str(args.extra_dir) if args.extra_dir else None,
         "embed_url": args.embed_url,
         "embed_model": client.model,
+        "docs_version": docs_version(docs_dir),
         "built_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
         "build_seconds": round(time.monotonic() - t0, 1),
     })
