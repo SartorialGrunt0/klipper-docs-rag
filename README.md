@@ -11,6 +11,8 @@ every prompt is automatically grounded in the relevant documentation
 sections, cited and injected, with no tool calling required.
 
 - **Design & research:** [`docs/RAG-RESEARCH.md`](docs/RAG-RESEARCH.md)
+- **Model services:** [`docs/EMBEDDING-AND-RERANKER-SETUP.md`](docs/EMBEDDING-AND-RERANKER-SETUP.md)
+  — setting up the embedding server and optional reranker
 - **Install:** [`install.sh`](install.sh) · **Remove:** [`uninstall.sh`](uninstall.sh)
 - **Version-aware:** the index records which Klipper version it was built
   from, and stale answers carry a docs-update footnote (see
