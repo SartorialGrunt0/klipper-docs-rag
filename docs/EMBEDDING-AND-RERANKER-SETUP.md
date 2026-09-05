@@ -241,10 +241,6 @@ llama-server -m bge-reranker-v2-m3-q8_0.gguf \
 EMBED_URL=http://192.168.x.x:8100 ./install.sh   # and reranker via --rerank-url
 ```
 
-If a port can't be opened, tunnel it from the proxy host:
-`ssh -f -N -L 8100:127.0.0.1:8100 user@modelhost` and use
-`http://127.0.0.1:8100`.
-
 ---
 
 ## Verification
