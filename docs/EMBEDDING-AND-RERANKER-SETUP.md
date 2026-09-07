@@ -22,7 +22,8 @@ and skim [Verification](#verification).
 llama-server -m ~/models/nomic-embed-text-v1.5-Q8_0.gguf \
   --embedding --pooling mean --embd-normalize 2 \
   -b 2048 -ub 2048 \
-  --host 127.0.0.1 --port 8100
+  --host 127.0.0.1 --port 8100 \
+  --sleep-idle-seconds 300   # unload from VRAM after 5 min idle
 
 # 2. install; add --with-reranker to set up the reranker service too
 cd klipper-docs-rag
@@ -79,10 +80,18 @@ with no measurable recall loss for this corpus.)
 llama-server -m ~/models/nomic-embed-text-v1.5-Q8_0.gguf \
   --embedding --pooling mean --embd-normalize 2 \
   -b 2048 -ub 2048 \
-  --host 127.0.0.1 --port 8100
+  --host 127.0.0.1 --port 8100 \
+  --sleep-idle-seconds 300
 ```
 
 What each flag is doing:
+
+- `--sleep-idle-seconds 300` — after 300 s with no request the model is
+  unloaded from VRAM (llama-server stays up, `/props` reports
+  `is_sleeping`); the next request reloads it automatically (~0.1–1 s for
+  these small models, plus the ~9 s first-load if the process just
+  restarted). This keeps the embedder at ~0 VRAM when unused instead of
+  reserving ~460 MiB permanently. Optional; drop it for always-hot.
 
 - `--embedding --pooling mean` — serves the model as an embedder with
   mean pooling over token embeddings. Required.
@@ -157,9 +166,14 @@ curl -fL -o ~/models/bge-reranker-v2-m3-q8_0.gguf \
 ```bash
 llama-server -m ~/models/bge-reranker-v2-m3-q8_0.gguf \
   --embedding --pooling rank --rerank \
-  --host 127.0.0.1 --port 8101 --ctx-size 4096
+  --host 127.0.0.1 --port 8101 --ctx-size 4096 \
+  --sleep-idle-seconds 300
 ```
 
+- `--sleep-idle-seconds 300` — same idle-unload behavior as the embedder
+  (~570 MiB → ~0 VRAM when unused; reload on the next rerank request).
+  The rerank step is only reached on gated-in RAG queries, so this model
+  is idle most of the time.
 - `--rerank` needs a llama.cpp build recent enough to support it (the
   flag errors on older builds — update if so). `--pooling rank` selects
   the cross-encoder ranking head.
@@ -232,10 +246,10 @@ Example layout (models on a workstation, proxy on a Pi):
 # workstation
 llama-server -m nomic-embed-text-v1.5-Q8_0.gguf \
   --embedding --pooling mean --embd-normalize 2 -b 2048 -ub 2048 \
-  --host 0.0.0.0 --port 8100
+  --host 0.0.0.0 --port 8100 --sleep-idle-seconds 300
 llama-server -m bge-reranker-v2-m3-q8_0.gguf \
   --embedding --pooling rank --rerank \
-  --host 0.0.0.0 --port 8101
+  --host 0.0.0.0 --port 8101 --sleep-idle-seconds 300
 
 # Pi
 EMBED_URL=http://192.168.x.x:8100 ./install.sh   # and reranker via --rerank-url

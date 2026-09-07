@@ -16,7 +16,8 @@ After=network-online.target
 ExecStart=__LLAMA_SERVER__ \
   -m __GGUF__ \
   --embedding --pooling rank --rerank \
-  --host 127.0.0.1 --port 8101 --ctx-size 4096
+  --host 127.0.0.1 --port 8101 --ctx-size 4096 \
+  --sleep-idle-seconds 300
 Restart=on-failure
 RestartSec=5
 
